@@ -5,7 +5,7 @@ import ValueSelector from "./ValueSelector";
 import { Paper } from "@material-ui/core";
 
 const DirList = ({ dirs, pickValue }) => {
-  console.log(dirs);
+  //console.log(dirs);
 
   //  const pickValue = event => {
   //   pickValue(event.target.value.pop());
