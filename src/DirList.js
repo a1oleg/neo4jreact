@@ -2,10 +2,10 @@ import React from "react";
 import ValueSelector from "./ValueSelector";
 
 //import { withStyles } from "@material-ui/core/styles";
-// import { Paper } from "@material-ui/core";
+import { Paper } from "@material-ui/core";
 
 const DirList = ({ dirs, pickValue }) => {
-  //console.log(dirs);
+  console.log(dirs);
 
   //  const pickValue = event => {
   //   pickValue(event.target.value.pop());
@@ -14,12 +14,19 @@ const DirList = ({ dirs, pickValue }) => {
   //  };
 
   return (
-    <div>
-      {/* <div>{dirs[0]}</div> */}
+    <Paper>
+      <div>_DirList {dirs[0]}</div>
       {dirs.map(n => {
-        return <ValueSelector key={n} pickValue={pickValue} dirDesc={n} />;
-      })}
-    </div>
+         return <div>{n}</div>;
+       })}
+       </Paper>
+    
+    // <div>
+    //   <div>{dirs[0]}</div>
+    //   {dirs.map(n => {
+    //     return <ValueSelector key={n} pickValue={pickValue} dirDesc={n} />;
+    //   })}
+    // </div>
   );
 };
 
