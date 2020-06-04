@@ -27,16 +27,16 @@ class RequestHead extends Component {
   // };
 
   render() {
-    console.log(this.props);
+    //console.log(this.props);
     return (
-       <dir>
+       <div>
          <div>_RequestHead</div>
         {this.props.allDirs.map(n => {
-         return <div>{n}</div>;
+         return <div key={n}>{n} <button  onClick = {this.props.addDir} value={n}/> </div>;
        })}
         
-        <DirList  />
-       </dir>
+        {/* <button  onClick = {this.props.addDir} value={n}/> */}
+       </div>
     );
   }
 }

@@ -9,8 +9,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      allDirs: ['blabla'],
-      actDirs: [],
+      allDirs: [],
+      actDirs: ['blabla'],
       results: [],
 
     };
@@ -25,40 +25,37 @@ class App extends Component {
   }
 
   fetchAllDirs = () => {
-    const res = this.xfetch('MATCH (x:Dir) RETURN x');
-    this.setState(({ allDirs }) => {
-          const newArr = [...allDirs, res.map(x => x.properties.description)];
-    
-          return {
-            allDirs: newArr
-          };
-        });  
+    this.xfetch('MATCH (x:Dir) RETURN x');    
       
-  }
+  };
 
 
-  xfetch = (query, params) => {
+  xfetch = (query) => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
-    .run(query, params)
+    .run(query)
     .subscribe({
       //onKeys: keys => {
         //console.log(keys)
       //},
       onNext: record => {
         //console.log(this.state.allDirs);
-        res.push(record.get('x'));        
-      },
-      onCompleted: () => {        
-        session.close();// returns a Promise
+        //res.push(record.get('x').properties.description);    
         this.setState(({ allDirs }) => {
-          const newArr = [...allDirs, res.map(x => x.properties.description)];
+          const newArr = [...allDirs, record.get('x').properties.description];
     
           return {
             allDirs: newArr
           };
         });
+
+      },
+      onCompleted: () => {        
+        session.close();// returns a Promise
+        //return res;
+        
+        
       },
       onError: error => {
         console.log(error)
@@ -66,23 +63,24 @@ class App extends Component {
     });    
   }
   
-  // addDir = input => {
-  //   this.setState(({ actDirs }) => {
-  //     const newArr = [...actDirs, input];
+  addDir = input => {
+    this.setState(({ actDirs }) => {
+      const newArr = [...actDirs, input];
 
-  //     return {
-  //       actDirs: newArr
-  //     };
-  //   });
-  // };
+      return {
+        actDirs: newArr
+      };
+    });
+  };
 
   render() {      
       return (      
       <main> 
-        {this.state.allDirs.map(n => {
+             {this.state.actDirs.map(n => {
          return <div>{n}</div>;
-       })}       
-        <RequestHead allDirs={this.state.allDirs} /> 
+       })}
+
+        <RequestHead allDirs={this.state.allDirs} addDir ={this.addDir}/> 
       </main>
     );
   }
