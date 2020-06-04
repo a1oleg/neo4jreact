@@ -10,34 +10,36 @@ class RequestHead extends Component {
   //   };
     
   // }
+  handleChange = (event) => {
+    console.log(event.target.value);
+    console.log(this.props);
+    this.props.addDir(event.target.value);
+  }  
   
-  
-  // addDir = input => {
-  //   this.setState(({ dirs }) => {
-  //     const newArr = [...dirs, input];
-
-  //     return {
-  //       dirs: newArr
-  //     };
-  //   });
-  // };
-
-  // pickValue = input => {
-    
-  // };
 
   render() {
     //console.log(this.props);
     return (
-       <div>
-         <div>_RequestHead</div>
+      //  <div>
+      //    <div>_RequestHead</div>
+
+      <form>
+      <label>
+        Выберите ваш любимый вкус:
+       
+        <select onChange={this.handleChange}>
         {this.props.allDirs.map(n => {
-         return <div key={n}>{n} <button  onClick = {this.props.addDir} value={n}/> </div>;
+         return <option value={n}>{n}</option>
        })}
+          
+        </select>
+      </label>
+      {/* <input type="submit" value="Отправить" /> */}
+    </form>
+
+    )
         
-        {/* <button  onClick = {this.props.addDir} value={n}/> */}
-       </div>
-    );
+        
   }
 }
 
