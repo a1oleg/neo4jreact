@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      allDirs: [],
+      allDirs: ['blabla'],
       actDirs: [],
       results: [],
 
@@ -19,23 +19,25 @@ class App extends Component {
       'bolt://localhost:7687',
       neo4j.auth.basic('neo4j', 'letmein')
     )
+    
+    this.fetchAllDirs();  
 
-    const res = this.fetch('MATCH (x:Dir) RETURN x');
+  }
 
+  fetchAllDirs = () => {
+    const res = this.xfetch('MATCH (x:Dir) RETURN x');
     this.setState(({ allDirs }) => {
           const newArr = [...allDirs, res.map(x => x.properties.description)];
     
           return {
             allDirs: newArr
           };
-        }
-      );
-
+        });  
+      
   }
 
-  
-  fetch = (query, params) => {
-    //const { mapCenter, startDate, endDate } = this.state;
+
+  xfetch = (query, params) => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
@@ -46,47 +48,42 @@ class App extends Component {
       //},
       onNext: record => {
         //console.log(this.state.allDirs);
-        res.push(record.get('x'));
-        // this.setState(({ allDirs }) => {
-        //   const newArr = [...allDirs, record.get('x').properties.description];
-    
-        //   return {
-        //     allDirs: newArr
-        //   };
-        // });
+        res.push(record.get('x'));        
       },
       onCompleted: () => {        
         session.close();// returns a Promise
-        console.log(res.map(x => x.properties.description));
-        return res;
+        this.setState(({ allDirs }) => {
+          const newArr = [...allDirs, res.map(x => x.properties.description)];
+    
+          return {
+            allDirs: newArr
+          };
+        });
       },
       onError: error => {
         console.log(error)
       }
-    })
-
-    // addDir = input => {
-    //   this.setState(({ actDirs }) => {
-    //     const newArr = [...actDirs, input];
-  
-    //     return {
-    //       actDirs: newArr
-    //     };
-    //   });
-    // };
-
-
+    });    
   }
   
-  render() {
-      return (
-      
-      <main>        
-        <RequestHead addDir={this.addDir} allDirs={this.state.allDirs}/>
-        {/* <ResponseBody /> */}
-        
+  // addDir = input => {
+  //   this.setState(({ actDirs }) => {
+  //     const newArr = [...actDirs, input];
+
+  //     return {
+  //       actDirs: newArr
+  //     };
+  //   });
+  // };
+
+  render() {      
+      return (      
+      <main> 
+        {this.state.allDirs.map(n => {
+         return <div>{n}</div>;
+       })}       
+        <RequestHead allDirs={this.state.allDirs} /> 
       </main>
-      
     );
   }
 }

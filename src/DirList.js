@@ -4,7 +4,7 @@ import ValueSelector from "./ValueSelector";
 //import { withStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
 
-const DirList = ({ dirs, pickValue }) => {
+const DirList = ( props ) => {
   //console.log(dirs);
 
   //  const pickValue = event => {
@@ -15,10 +15,10 @@ const DirList = ({ dirs, pickValue }) => {
 
   return (
     <Paper>
-      <div>_DirList {dirs[0]}</div>
-      {dirs.map(n => {
+      <div>_DirList </div>
+      {/* {props.allDirs.map(n => {
          return <div>{n}</div>;
-       })}
+       })} */}
        </Paper>
     
     // <div>
