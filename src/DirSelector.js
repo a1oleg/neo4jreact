@@ -1,50 +1,39 @@
-import React from "react";
+import React, { Component } from "react";
 
+//import { Paper } from "@material-ui/core";
+class DirSelector extends Component {
+ 
+  handleChange = (event) => {
+    console.log(event.target.value);
+    //console.log(this.props);
+    this.props.addDir(event.target.value);
+  }  
+  
 
-// import {
-//   Input,
-//   InputLabel,
-//   MenuItem,
-//   FormControl,
-//   Select,
-//   Paper
-// } from "@material-ui/core";
+  render() {
+    //console.log(this.props);
+    return (
+      //  <div>
+      //    <div>_RequestHead</div>
 
+      <form>
+      <label>
+        Выберите ваш любимый вкус:
+       
+        <select onChange={this.handleChange}>
+        {this.props.allDirs.map(n => {
+         return <option value={n.name}>{n.name}</option>
+       })}
+          
+        </select>
+      </label>
+      {/* <input type="submit" value="Отправить" /> */}
+    </form>
 
-
-function DirSelector({ addDir }) {
-  // const { loading, data, error } = useQuery(GET_FIELDS);
-  // //console.log(data);
-
-  // const handleChange = event => {
-  //   addDir(event.target.value.pop());
-  //   //console.log(event.target.value);
-  // };
-   return (
-    <div>_DirSelector</div>
-  //   <Paper>
-  //     {data && !loading && !error && (
-  //       <FormControl>
-  //         <InputLabel id="demo-mutiple-name-label">Name</InputLabel>
-  //         <Select
-  //           labelId="demo-mutiple-name-label"
-  //           id="demo-mutiple-name"
-  //           multiple
-  //           value={data.Dir}
-  //           onChange={handleChange}
-  //           input={<Input />}
-  //           // MenuProps={MenuProps}
-  //         >
-  //           {data.Dir.map(n => (
-  //             <MenuItem key={n.description} value={n.description}>
-  //               {n.description}
-  //             </MenuItem>
-  //           ))}
-  //         </Select>
-  //       </FormControl>
-  //     )}
-  //   </Paper>
-   );
+    )
+        
+        
+  }
 }
 
 export default DirSelector; // withStyles(styles)(UserList);

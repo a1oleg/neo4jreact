@@ -5,20 +5,23 @@ import ValueSelector from "./ValueSelector";
 import { Paper } from "@material-ui/core";
 
 const DirList = ( props ) => {
-  //console.log(dirs);
-
-  //  const pickValue = event => {
-  //   pickValue(event.target.value.pop());
-  //   console.log(event.target.value.pop());
-
-  //  };
+  
 
   return (
     <Paper>
-      <div>_DirList </div>
-      {/* {props.allDirs.map(n => {
-         return <div>{n}</div>;
-       })} */}
+      <form>
+      <label>
+      {this.props.name}
+       
+        <select onChange={this.handleChange}>
+        {this.props.values.map(n => {
+         return <option value={n}>{n}</option>
+       })}
+          
+        </select>
+      </label>
+      {/* <input type="submit" value="Отправить" /> */}
+    </form>
        </Paper>
     
     // <div>

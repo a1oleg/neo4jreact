@@ -1,52 +1,30 @@
 import React from "react";
 
-// import {
-//   Input,
-//   InputLabel,
-//   MenuItem,
-//   FormControl,
-//   Select,
-//   Paper
-// } from "@material-ui/core";
+//import { withStyles } from "@material-ui/core/styles";
+import { Paper } from "@material-ui/core";
 
+const ValueSelector = (  {props} ) => {
+  
+  console.log(props.name);
+  return (
+    // <Paper>
+      <form>
+      <label>
+      {props.name}
+       
+        <select onChange={this.handleChange}>
+        {props.values.map(n => {
+         return <option value={n}>{n}</option>
+       })}
+          
+        </select>
+      </label>
+      {/* <input type="submit" value="Отправить" /> */}
+    </form>
+      //  </Paper>
+    
+  
+  );
+};
 
-
-function ValueSelector({ pickValue, dirDesc }) {
-  // const { loading, data, error } = useQuery(GET_VALUES, {
-  //   variables: { desc: dirDesc }
-  //});
-  //console.log(data);
-
-  // const handleChange = event => {
-  //   pickValue(event.target.value.pop());
-  //   console.log(event.target.value.pop());
-  // };
-   return (
-    <div>_ValueSelector</div>
-  //   <Paper>
-  //     <div>{dirDesc}</div>
-  //     {data && !loading && !error && (
-  //       <FormControl>
-  //         <InputLabel id="demo-mutiple-name-label">Name</InputLabel>
-  //         <Select
-  //           labelId="demo-mutiple-name-label"
-  //           id="demo-mutiple-name"
-  //           multiple
-  //           value={data.Values}
-  //           onChange={handleChange}
-  //           input={<Input />}
-  //           // MenuProps={MenuProps}
-  //         >
-  //           {data.Values.map(n => (
-  //             <MenuItem key={n} value={n}>
-  //               {n}
-  //             </MenuItem>
-  //           ))}
-  //         </Select>
-  //       </FormControl>
-  //     )}
-  //   </Paper>
-   );
-}
-
-export default ValueSelector; // withStyles(styles)(UserList);
+export default ValueSelector; 

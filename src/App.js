@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import './App.css';
-import RequestHead from "./RequestHead";
+import DirSelector from "./DirSelector";
+import ValueSelector from "./ValueSelector";
 
 var neo4j = require('neo4j-driver')
 
@@ -9,7 +10,10 @@ class App extends Component {
     super(props);
 
     this.state = {
-      allDirs: [],
+      allDirs: [{
+        name: 'bar',
+        values: []
+      }],
       actDirs: ['blabla'],
       results: [],
 
@@ -20,19 +24,13 @@ class App extends Component {
       neo4j.auth.basic('neo4j', 'letmein')
     )
     
-    this.fetchAllDirs();  
+    this.xfetch('MATCH (x:Dir) RETURN x'); 
 
   }
 
-  fetchAllDirs = () => {
-    this.xfetch('MATCH (x:Dir) RETURN x');    
-      
-  };
-
-
   xfetch = (query) => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    const res = [];
+    //const res = [];
     session
     .run(query)
     .subscribe({
@@ -43,7 +41,10 @@ class App extends Component {
         //console.log(this.state.allDirs);
         //res.push(record.get('x').properties.description);    
         this.setState(({ allDirs }) => {
-          const newArr = [...allDirs, record.get('x').properties.description];
+          const newArr = [...allDirs,{
+            name: record.get('x').properties.description,
+            values: []
+          } ];
     
           return {
             allDirs: newArr
@@ -63,24 +64,57 @@ class App extends Component {
     });    
   }
   
-  addDir = input => {
-    this.setState(({ actDirs }) => {
-      const newArr = [...actDirs, input];
 
-      return {
-        actDirs: newArr
-      };
-    });
+  addDir = input => {
+    console.log(input)
+    const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
+    const res = [];
+    session
+    .run('MATCH (d:Dir {description: $nameParam})-[:value]->(v:Value) RETURN v.TXTLG', {
+      nameParam: input
+    })
+    .subscribe({
+      //onKeys: keys => {
+        //console.log(keys)
+      //},
+      onNext: record => {
+        res.push(record._fields[0]); 
+         
+
+      },
+      onCompleted: () => {  
+        
+        this.setState(({ actDirs }) => {
+          const newArr = [...actDirs, {
+            name: input,
+            values: res
+          } ];
+    
+          return {
+            actDirs: newArr
+          };
+        });
+        console.log(this.state.actDirs);
+        session.close();// returns a Promise        
+        
+      },
+      onError: error => {
+        console.log(error)
+      }
+    }); 
+    
   };
 
   render() {      
       return (      
       <main> 
-             {this.state.actDirs.map(n => {
-         return <div>{n}</div>;
+             {this.state.actDirs.forEach(n => {
+               
+          return <ValueSelector name= {n.name} values = {n.values}  />
+       
        })}
 
-        <RequestHead allDirs={this.state.allDirs} addDir ={this.addDir}/> 
+        <DirSelector allDirs={this.state.allDirs} addDir ={this.addDir}/> 
       </main>
     );
   }
