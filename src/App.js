@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import './App.css';
-import DirSelector from "./DirSelector";
-import ValueSelector from "./ValueSelector";
-
+import Selector from "./Selector";
+import DirList from "./DirList";
 var neo4j = require('neo4j-driver')
 
 class App extends Component {
@@ -14,7 +13,7 @@ class App extends Component {
         name: 'bar',
         values: []
       }],
-      actDirs: ['blabla'],
+      actDirs: [],
       results: [],
 
     };
@@ -108,13 +107,13 @@ class App extends Component {
   render() {      
       return (      
       <main> 
-             {this.state.actDirs.forEach(n => {
+             {this.state.actDirs.map(n => {
                
-          return <ValueSelector name= {n.name} values = {n.values}  />
+          return <Selector name= {n.name} values = {n.values}  />//change ={this.addDir}
        
        })}
-
-        <DirSelector allDirs={this.state.allDirs} addDir ={this.addDir}/> 
+        
+        <Selector name= {'Справочники'} values={this.state.allDirs.map(d => d.name)} change ={this.addDir}/> 
       </main>
     );
   }

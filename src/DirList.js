@@ -1,36 +1,30 @@
-import React from "react";
-import ValueSelector from "./ValueSelector";
+import React, { Component } from "react";
+import Selector from "./Selector";
 
 //import { withStyles } from "@material-ui/core/styles";
-import { Paper } from "@material-ui/core";
+//import { Paper } from "@material-ui/core";
+class DirList extends Component{
 
-const DirList = ( props ) => {
-  
-
-  return (
-    <Paper>
-      <form>
-      <label>
-      {this.props.name}
-       
-        <select onChange={this.handleChange}>
-        {this.props.values.map(n => {
-         return <option value={n}>{n}</option>
-       })}
-          
-        </select>
-      </label>
-      {/* <input type="submit" value="Отправить" /> */}
-    </form>
-       </Paper>
+  render() {
     
-    // <div>
-    //   <div>{dirs[0]}</div>
-    //   {dirs.map(n => {
-    //     return <ValueSelector key={n} pickValue={pickValue} dirDesc={n} />;
-    //   })}
-    // </div>
-  );
+    return (
+      <div>
+
+          {this.props.values.forEach(n => {
+               
+               return <Selector name= {n.name} values = {n.values}/>
+            
+            })}
+      </div>
+      
+
+    )
+        
+        
+  }
+  
+  
+  
 };
 
 export default DirList; //

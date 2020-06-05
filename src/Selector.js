@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 
 //import { Paper } from "@material-ui/core";
-class DirSelector extends Component {
+class Selector extends Component {
  
   handleChange = (event) => {
     console.log(event.target.value);
     //console.log(this.props);
-    this.props.addDir(event.target.value);
+    this.props.change(event.target.value);
   }  
   
 
@@ -18,11 +18,11 @@ class DirSelector extends Component {
 
       <form>
       <label>
-        Выберите ваш любимый вкус:
+        {this.props.name}
        
         <select onChange={this.handleChange}>
-        {this.props.allDirs.map(n => {
-         return <option value={n.name}>{n.name}</option>
+        {this.props.values.map(n => {
+         return <option value={n}>{n}</option>
        })}
           
         </select>
@@ -36,4 +36,4 @@ class DirSelector extends Component {
   }
 }
 
-export default DirSelector; // withStyles(styles)(UserList);
+export default Selector; // withStyles(styles)(UserList);
