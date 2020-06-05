@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      allDirs: new Map(),
+      allDirs: new Map([['blabla', new Set()]]),
       actDirs: [],
       results: [],
 
@@ -22,10 +22,12 @@ class App extends Component {
     
     this.allDirsfetch('MATCH (x:Dir) RETURN x');
 
-    }
-    
+  }
+
+  // fetchAllDirs = () => {
+  //   this.allDirsfetch('MATCH (x:Dir) RETURN x');    
       
-  };
+  // };
 
 
   allDirsfetch = (query) => {
@@ -50,7 +52,9 @@ class App extends Component {
           };
         });
       },
-      onCompleted: () => {        
+      onCompleted: () => {    
+        //this.state.allDirs.forEach((value, key, map) =>console.log(value[0]) );
+        //console.log(this.state.allDirs)   
         session.close();// returns a Promise
         //return res;        
       },
@@ -106,9 +110,11 @@ class App extends Component {
   render() {      
       return (      
       <main> 
-             {this.state.allDirs.map(n => {
-         return <div>{n.name}</div>;
-       })}
+        {this.state.allDirs.forEach((value, key, map) =>console.log(value[0]) )}
+             {this.state.allDirs.forEach((value, key, map) => {
+         return <div>{value[0]}</div>
+       })
+       }
 
         <RequestHead allDirs={this.state.allDirs} addDir ={this.valuesDirfetch}/> 
       </main>

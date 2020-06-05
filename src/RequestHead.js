@@ -28,7 +28,7 @@ class RequestHead extends Component {
         Добавить справочник:
        
         <select onChange={this.handleChange}>
-        {this.props.allDirs.map(n => {
+        {this.props.allDirs.keys(n => {
          return <option value={n}>{n}</option>
        })}
           
