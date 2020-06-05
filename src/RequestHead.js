@@ -11,8 +11,8 @@ class RequestHead extends Component {
     
   // }
   handleChange = (event) => {
-    //console.log(event.target.value);
-    //console.log(this.props);
+    console.log(event.target.value);
+    console.log(this.props);
     this.props.addDir(event.target.value);
   }  
   
@@ -25,7 +25,7 @@ class RequestHead extends Component {
 
       <form>
       <label>
-        Добавить справочник:
+        Выберите ваш любимый вкус:
        
         <select onChange={this.handleChange}>
         {this.props.allDirs.map(n => {
