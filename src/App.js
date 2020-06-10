@@ -10,7 +10,7 @@ class App extends Component {
 
     this.state = {
       allDirs: [{
-        name: 'bar',
+        name: 'Мать справочников',
         values: []
       }],
       actDirs: [],
@@ -22,54 +22,19 @@ class App extends Component {
       'bolt://localhost:7687',
       neo4j.auth.basic('neo4j', 'letmein')
     )
-    
-    this.xfetch('MATCH (x:Dir) RETURN x'); 
+    console.log(this.xfetch('Мать справочников'));
+     
 
   }
 
-  xfetch = (query) => {
-    const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    //const res = [];
-    session
-    .run(query)
-    .subscribe({
-      //onKeys: keys => {
-        //console.log(keys)
-      //},
-      onNext: record => {
-        //console.log(this.state.allDirs);
-        //res.push(record.get('x').properties.description);    
-        this.setState(({ allDirs }) => {
-          const newArr = [...allDirs,{
-            name: record.get('x').properties.description,
-            values: []
-          } ];
-    
-          return {
-            allDirs: newArr
-          };
-        });
-
-      },
-      onCompleted: () => {        
-        session.close();// returns a Promise
-        //return res;
-        
-        
-      },
-      onError: error => {
-        console.log(error)
-      }
-    });    
-  }
   
 
-  addDir = input => {
+  xfetch = input => {
     console.log(input)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
-    .run('MATCH (d:Dir {description: $nameParam})-[:value]->(v:Value) RETURN v.TXTLG', {
+    .run('MATCH (d{Name: $nameParam})-[:value]->(v) RETURN v.Name', {
       nameParam: input
     })
     .subscribe({
@@ -77,43 +42,50 @@ class App extends Component {
         //console.log(keys)
       //},
       onNext: record => {
-        res.push(record._fields[0]); 
-         
-
+        res.push(record._fields[0]);
       },
-      onCompleted: () => {  
+      onCompleted: () => {          
+        // this.setState(({ allDirs }) => {
+        //   const newArr = allDirs.filter(function(item) { 
+        //       return item === input
+        //   });
+
+        //   newArr.push({
+        //     name: input,
+        //     values: res
+        //   } );    
+        //   return {
+        //     allDirs: newArr
+        //   };
+        // });
         
-        this.setState(({ actDirs }) => {
-          const newArr = [...actDirs, {
-            name: input,
-            values: res
-          } ];
-    
-          return {
-            actDirs: newArr
-          };
-        });
-        console.log(this.state.actDirs);
-        session.close();// returns a Promise        
-        
+        session.close();// returns a Promise
+        return res;
       },
       onError: error => {
         console.log(error)
       }
-    }); 
-    
+    });    
+  };
+
+  addValue = input => {
+    console.log(input)
+
   };
 
   render() {      
       return (      
       <main> 
-             {this.state.actDirs.map(n => {
-               
-          return <Selector name= {n.name} values = {n.values}  />//change ={this.addDir}
-       
+             {this.state.allDirs.filter(function(item) { 
+                return item.values.length > 0 && item.name !== 'Мать справочников'
+            })
+             .map(n => {               
+          return <Selector name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
        })}
         
-        <Selector name= {'Справочники'} values={this.state.allDirs.map(d => d.name)} change ={this.addDir}/> 
+        <Selector name= {'Справочники'} values={this.state.allDirs.filter(function(item) { 
+                return item.name == 'Мать справочников'
+            })[0].values} change ={this.xfetch}/> 
       </main>
     );
   }

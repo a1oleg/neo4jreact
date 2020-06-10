@@ -22,7 +22,7 @@ class Selector extends Component {
        
         <select onChange={this.handleChange}>
         {this.props.values.map(n => {
-         return <option value={n}>{n}</option>
+         return <option value={n} key={n} >{n}</option>
        })}
           
         </select>
