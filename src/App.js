@@ -9,11 +9,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      allDirs: [{
-        name: 'Мать справочников',
-        values: []
-      }],
-      actDirs: [],
+      allDirs:[],// [{name:'Мать справочников', values:[]}],
+      // actDirs: [],//
       results: [],
 
     };
@@ -28,7 +25,7 @@ class App extends Component {
   xfetch = (param) => {
     //console.log(input)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    //const res = [];
+    const res = [];
     session
     .run('MATCH (d{Name: $nameParam})-[:value]->(v) RETURN v.Name', {
       nameParam: param
@@ -38,30 +35,15 @@ class App extends Component {
         //console.log(keys)
       //},
       onNext: record => {
-        //res.push(record._fields[0]);
-        console.log(record._fields[0]);
-        this.setState({ [this.state.allDirs]: [this.state.allDirs.filter(function(item) { 
-            return item.name === param
-        })[0].values.push(record._fields[0])] });
+        res.push(record._fields[0]);
+        // console.log(record._fields[0]);
+        // this.setState({ [this.state.allDirs]: [this.state.allDirs.filter(function(item) { 
+        //     return item.name === param
+        // })[0].values.push(record._fields[0])] });
       },
       onCompleted: () => {    
-        
-        //this.setState({ [target]: [...target, ...res ] });
-        console.log(this.state.allDirs)
-        // this.setState(({ allDirs }) => {
-        //   const newArr = allDirs.filter(function(item) { 
-        //       return item === input
-        //   });
-
-        //   newArr.push({
-        //     name: input,
-        //     values: res
-        //   } );    
-        //   return {
-        //     allDirs: newArr
-        //   };
-        // });
-        
+        this.setState({ [this.state.allDirs]: [this.state.allDirs.push({name:param, values:res} )]});
+        console.log(this.state.allDirs);
         session.close();// returns a Promise
         
       },
@@ -84,11 +66,18 @@ class App extends Component {
             })
              .map(n => {               
           return <Selector name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
-       })}
+       })}        
         
-        <Selector name= {'Справочники'} values={this.state.allDirs.filter(function(item) { 
+        {
+        this.state.allDirs.filter(function(item) { 
                 return item.name == 'Мать справочников'
-            })[0].values} change ={this.xfetch}/> 
+            }) > 0 ? 
+            <Selector name= {'Справочники'} values={this.state.allDirs.filter(function(item) { 
+                  return item.name == 'Мать справочников'
+              })[0].values} change ={this.xfetch}/>
+            : <span>ждёмс...</span>
+            }
+         
       </main>
     );
   }
