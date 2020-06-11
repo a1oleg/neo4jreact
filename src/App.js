@@ -22,10 +22,10 @@ class App extends Component {
       'bolt://localhost:7687',
       neo4j.auth.basic('neo4j', 'letmein')
     )
-    this.xfetch('Мать справочников'); 
+    this.xfetch('Мать справочников', this.state.allDirs); 
   }
 
-  xfetch = (param) => {
+  xfetch = (param, target) => {
     //console.log(input)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     //const res = [];
@@ -40,14 +40,14 @@ class App extends Component {
       onNext: record => {
         //res.push(record._fields[0]);
         console.log(record._fields[0]);
-        this.setState({ [this.state.allDirs]: [this.state.allDirs.filter(function(item) { 
+        this.setState({ [target]: [target.filter(function(item) { 
             return item.name === param
         })[0].values.push(record._fields[0])] });
       },
       onCompleted: () => {    
         
         //this.setState({ [target]: [...target, ...res ] });
-        console.log(this.state.allDirs)
+        console.log(target)
         // this.setState(({ allDirs }) => {
         //   const newArr = allDirs.filter(function(item) { 
         //       return item === input
