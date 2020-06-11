@@ -22,29 +22,32 @@ class App extends Component {
       'bolt://localhost:7687',
       neo4j.auth.basic('neo4j', 'letmein')
     )
-    console.log(this.xfetch('Мать справочников'));
-     
-
+    this.xfetch('Мать справочников', this.state.allDirs); 
   }
 
-  
-
-  xfetch = input => {
-    console.log(input)
+  xfetch = (param, target) => {
+    //console.log(input)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    const res = [];
+    //const res = [];
     session
     .run('MATCH (d{Name: $nameParam})-[:value]->(v) RETURN v.Name', {
-      nameParam: input
+      nameParam: param
     })
     .subscribe({
       //onKeys: keys => {
         //console.log(keys)
       //},
       onNext: record => {
-        res.push(record._fields[0]);
+        //res.push(record._fields[0]);
+        console.log(record._fields[0]);
+        this.setState({ [target]: [target.filter(function(item) { 
+            return item.name === param
+        })[0].values.push(record._fields[0])] });
       },
-      onCompleted: () => {          
+      onCompleted: () => {    
+        
+        //this.setState({ [target]: [...target, ...res ] });
+        console.log(target)
         // this.setState(({ allDirs }) => {
         //   const newArr = allDirs.filter(function(item) { 
         //       return item === input
@@ -60,7 +63,7 @@ class App extends Component {
         // });
         
         session.close();// returns a Promise
-        return res;
+        
       },
       onError: error => {
         console.log(error)
