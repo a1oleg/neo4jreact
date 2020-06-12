@@ -19,13 +19,33 @@ class App extends Component {
       'bolt://localhost:7687',
       neo4j.auth.basic('neo4j', 'letmein')
     )
-    this.xfetch('Мать справочников', 'allDirs'); 
-  }
+   
+    const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
+    const res = [];
+    session
+    .run('MATCH (d{Name: $nameParam})-[:value]->(v) RETURN v.Name', {
+      nameParam: 'Мать справочников'
+    })
+    .subscribe({     
+      onNext: record => {
+        res.push(record._fields[0]);  
+        console.log(record._fields[0])      
+      },
+      onCompleted: () => {          
+        this.setState({ allDirs: res})
+        //console.log(this.state)
+        session.close();// returns a Promise  
+      },
+      onError: error => {
+        console.log(error)
+      }
+    });    
+  };
 
-  xfetch = (param, target) => {
+  
 
-    //this.setState({ allDirs: [...allDirs, {name: param, values: []} ] });
-    
+  xfetch = (param) => {
+
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
@@ -38,12 +58,18 @@ class App extends Component {
       //},
       onNext: record => {
         res.push(record._fields[0]);
-        //this.setState({ target: [...target, record._fields[0] ] })
+        
       },
       onCompleted: () => {  
-        console.log(this.state)
-         this.setState({ target: res})
-        session.close();// returns a Promise  
+        session.close();// returns a Promise
+          this.setState(({ actDirs }) => {
+          const newArr = [...actDirs, {name: param, values: res}];   
+    
+            return {
+              actDirs: newArr
+            }
+        })
+          
       },
       onError: error => {
         console.log(error)
@@ -63,7 +89,7 @@ class App extends Component {
           return <Selector name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
        })}
         
-        <Selector name= {'Справочники'} values={this.state.allDirs.map(x => x.values)} change ={this.xfetch}/> 
+        <Selector name= {'Справочники'} values={this.state.allDirs} change ={this.xfetch}/> 
       </main>
     );
   }
