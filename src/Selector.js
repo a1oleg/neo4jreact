@@ -4,11 +4,11 @@ import React, { Component } from "react";
 class Selector extends Component {
  
   handleChange = (event) => {
-    console.log(event.target.value);
-    //console.log(this.props);
-    this.props.change(event.target.value);
+    //console.log(event.target.value);
+    //console.log(event.target.name);
+    
+    this.props.change({name:event.target.name, value:event.target.value});
   }  
-  
 
   render() {
     //console.log(this.props);
@@ -17,12 +17,12 @@ class Selector extends Component {
       //    <div>_RequestHead</div>
 
       <form>
-      <label>
+      <label >
         {this.props.name}
        
-        <select onChange={this.handleChange}>
+        <select onChange={this.handleChange} name={this.props.name}>
         {this.props.values.map(n => {
-         return <option value={n} key={n} >{n}</option>
+         return <option key={n} value={n} >{n}</option>
        })}
           
         </select>
@@ -36,4 +36,4 @@ class Selector extends Component {
   }
 }
 
-export default Selector; // withStyles(styles)(UserList);
+export default Selector;
