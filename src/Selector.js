@@ -7,7 +7,7 @@ class Selector extends Component {
     //console.log(event.target.value);
     //console.log(event.target.name);
     
-    this.props.change({name:event.target.name, value:event.target.value});
+    this.props.change(event.target);
   }  
 
   render() {
@@ -22,7 +22,7 @@ class Selector extends Component {
        
         <select onChange={this.handleChange} name={this.props.name}>
         {this.props.values.map(n => {
-         return <option key={n} value={n} >{n}</option>
+         return <option key={n.name} value={n.name} >{n.name}</option>
        })}
           
         </select>

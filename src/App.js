@@ -30,7 +30,7 @@ class App extends Component {
     })
     .subscribe({     
       onNext: record => {
-        res.push(record._fields[0]);  
+        res.push({name:record._fields[0]});  
         //console.log(record._fields[0])      
       },
       onCompleted: () => {          
@@ -51,7 +51,7 @@ class App extends Component {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
-    .run('MATCH (d{Name: $nameParam})-[:value]->(v) RETURN v.Name', {
+    .run('MATCH (:Dir{Name: $nameParam})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
       nameParam: param.value
     })
     .subscribe({
@@ -59,8 +59,8 @@ class App extends Component {
         //console.log(keys)
       //},
       onNext: record => {
-        res.push(record._fields[0]);
-        
+        res.push({name:record._fields[0], count:record._fields[1].low});
+        //console.log(record._fields[1].low)
       },
       onCompleted: () => {  
         session.close();// returns a Promise
@@ -82,7 +82,7 @@ class App extends Component {
   addValue = input => {
     console.log(input)
     this.setState(({ choDirs }) => {
-      const newArr = [...choDirs, {name: input.name, value: input.value}];   
+      const newArr = [...choDirs, input];   
 
         return {
           choDirs: newArr
@@ -110,13 +110,7 @@ class App extends Component {
       onCompleted: () => {  
         session.close();// returns a Promise
         console.log(res)
-        //   this.setState(({ actDirs }) => {
-        //   const newArr = [...actDirs, {name: param.value, values: res}];   
-    
-        //     return {
-        //       actDirs: newArr
-        //     }
-        // })
+        
           
       },
       onError: error => {
