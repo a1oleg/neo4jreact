@@ -47,7 +47,7 @@ class App extends Component {
   
 
   addDir = (param) => {
-    console.log(param)
+    //console.log(param)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
@@ -80,7 +80,7 @@ class App extends Component {
   };
 
   addValue = input => {
-    console.log(input)
+    //console.log(input)
 
     
     this.setState(({ choDirs }) => {
@@ -148,7 +148,7 @@ class App extends Component {
       return (      
       <main> 
              {this.state.actDirs.map(n => {               
-          return <Selector key={n.name} name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
+          return <Selector key={n.value} name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
        })}
         
         <Selector name= {'Ввод'} values={this.state.allDirs} change ={this.addDir}/> 

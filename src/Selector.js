@@ -4,12 +4,12 @@ import React, { Component } from "react";
 class Selector extends Component {
  
   handleChange = (event) => {
-    console.log(event.target.name);
-    console.log(event.target.value);
+    //console.log(event.target.name);
+    //console.log(event.target.value);
     
     //console.log(event.target.count);
     
-    //let cityId = cities.find(city => city.name === searchTerm).id
+    
     this.props.change(this.props.values.find(x => x.name === event.target.value));
   }  
 
