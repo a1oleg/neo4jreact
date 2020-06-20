@@ -97,8 +97,36 @@ class App extends Component {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     
-    //по обратному порядку каунта добавлять в запрос
-    let sorted = this.state.choDirs.sort(function (a, b) {
+    // //по обратному порядку каунта добавлять в запрос
+    // let sorted = this.state.choDirs.sort(function (a, b) {
+    //   if (a.name > b.count) {
+    //     return 1;
+    //   }
+    //   if (a.name < b.count) {
+    //     return -1;
+    //   }
+    //   // a должно быть равным b
+    //   return 0;
+    // });
+
+    // this.setState(({ choDirs }) => {
+    //   const newArr = choDirs.sort(function (a, b) {
+    //     if (a.name > b.count) {
+    //       return 1;
+    //     }
+    //     if (a.name < b.count) {
+    //       return -1;
+    //     }
+    //     // a должно быть равным b
+    //     return 0;
+    //   });  
+
+    //     return {
+    //       choDirs: newArr
+    //     }
+    // })
+
+    console.log(this.state.choDirs.sort(function (a, b) {
       if (a.name > b.count) {
         return 1;
       }
@@ -107,30 +135,28 @@ class App extends Component {
       }
       // a должно быть равным b
       return 0;
-    });
+    }) );
 
-    console.log(sorted);
-
-    session
-    .run('MATCH (:Value{Name: $name0})<-[:field]-(w:Wagon)-[:field]->(:Value{Name: $name1}) RETURN w', {
-      name0: this.state.choDirs[0].value, name1: this.state.choDirs[1].value
-      //name0: 'Деповской ремонт', name1: 'прочие'
-    })
-    .subscribe({      
-      onNext: record => {
-        res.push(record._fields[0]);        
-      },
-      onCompleted: () => {  
-        session.close();// returns a Promise
-        console.log(res)
+    // session
+    // .run('MATCH (:Value{Name: $name0})<-[:field]-(w:Wagon)-[:field]->(:Value{Name: $name1}) RETURN w', {
+    //   name0: this.state.choDirs[0].value, name1: this.state.choDirs[1].value
+    //   //name0: 'Деповской ремонт', name1: 'прочие'
+    // })
+    // .subscribe({      
+    //   onNext: record => {
+    //     res.push(record._fields[0]);        
+    //   },
+    //   onCompleted: () => {  
+    //     session.close();// returns a Promise
+    //     console.log(res)
         
           
-      },
-      onError: error => {
-        console.log(error)
-      }
-    });    
-  };
+    //   },
+    //   onError: error => {
+    //     console.log(error)
+    //   }
+    // });    
+  }
 
   addOutField = input => {
     //console.log(input)
