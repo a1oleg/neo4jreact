@@ -81,6 +81,8 @@ class App extends Component {
 
   addValue = input => {
     console.log(input)
+
+    
     this.setState(({ choDirs }) => {
       const newArr = [...choDirs, input];   
 
@@ -91,13 +93,24 @@ class App extends Component {
 
   };
 
-  xfetch = () => {
-    console.log('param')
+  xfetch = () => {    
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     
-    //let query = 
-    
+    //по обратному порядку каунта добавлять в запрос
+    let sorted = this.state.choDirs.sort(function (a, b) {
+      if (a.name > b.count) {
+        return 1;
+      }
+      if (a.name < b.count) {
+        return -1;
+      }
+      // a должно быть равным b
+      return 0;
+    });
+
+    console.log(sorted);
+
     session
     .run('MATCH (:Value{Name: $name0})<-[:field]-(w:Wagon)-[:field]->(:Value{Name: $name1}) RETURN w', {
       name0: this.state.choDirs[0].value, name1: this.state.choDirs[1].value
@@ -135,7 +148,7 @@ class App extends Component {
       return (      
       <main> 
              {this.state.actDirs.map(n => {               
-          return <Selector name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
+          return <Selector key={n.name} name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
        })}
         
         <Selector name= {'Ввод'} values={this.state.allDirs} change ={this.addDir}/> 
@@ -144,7 +157,7 @@ class App extends Component {
         </button>
 
 
-        <Selector name= {'Вывод'} values={this.state.allDirs} change ={this.addOutField}/> 
+        {/* <Selector name= {'Вывод'} values={this.state.allDirs} change ={this.addOutField}/>  */}
       </main>
     );
   }

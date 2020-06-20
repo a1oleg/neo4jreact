@@ -4,9 +4,11 @@ import React, { Component } from "react";
 class Selector extends Component {
  
   handleChange = (event) => {
-    //console.log(event.target.value);
-    //console.log(event.target.name);
+    console.log(event.target.name);
+    console.log(event.target.value);
     
+    console.log(event.target.count);
+    console.log(event.target);
     this.props.change(event.target);
   }  
 
@@ -20,9 +22,9 @@ class Selector extends Component {
       <label >
         {this.props.name}
        
-        <select onChange={this.handleChange} name={this.props.name}>
-        {this.props.values.map(n => {
-         return <option key={n.name} value={n.name} >{n.name}</option>
+        <select onChange={this.handleChange} value={this.props.value} name={this.props.name} count={this.props.count}>
+        {this.props.values.map(v => {
+         return <option key={v.name} value={v.name} count={v.count} >{v.name} {v.count}</option>
        })}
           
         </select>
