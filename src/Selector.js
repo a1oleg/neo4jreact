@@ -7,9 +7,10 @@ class Selector extends Component {
     console.log(event.target.name);
     console.log(event.target.value);
     
-    console.log(event.target.count);
-    console.log(event.target);
-    this.props.change(event.target);
+    //console.log(event.target.count);
+    
+    //let cityId = cities.find(city => city.name === searchTerm).id
+    this.props.change(this.props.values.find(x => x.name === event.target.value));
   }  
 
   render() {
@@ -22,7 +23,7 @@ class Selector extends Component {
       <label >
         {this.props.name}
        
-        <select onChange={this.handleChange} value={this.props.value} name={this.props.name} count={this.props.count}>
+        <select onChange={this.handleChange}>
         {this.props.values.map(v => {
          return <option key={v.name} value={v.name} count={v.count} >{v.name} {v.count}</option>
        })}

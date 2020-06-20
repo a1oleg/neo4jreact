@@ -47,12 +47,12 @@ class App extends Component {
   
 
   addDir = (param) => {
-    //console.log(param)
+    console.log(param)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
     .run('MATCH (:Dir{Name: $nameParam})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
-      nameParam: param.value
+      nameParam: param.name
     })
     .subscribe({
       //onKeys: keys => {
