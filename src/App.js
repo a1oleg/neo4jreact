@@ -80,7 +80,7 @@ class App extends Component {
   };
 
   addValue = input => {
-    //console.log(input)
+    console.log(input)
 
     
     this.setState(({ choDirs }) => {
@@ -90,7 +90,7 @@ class App extends Component {
           choDirs: newArr
         }
     })
-
+    console.log(this.state.choDirs);
   };
 
   xfetch = () => {    
@@ -108,43 +108,26 @@ class App extends Component {
     //   // a должно быть равным b
     //   return 0;
     // });
+    
+    let qStart = 'MATCH (:Value{Name:';
+    
+    let qEnd = '})<-[:field]-(w:Wagon)\n';
 
-    // this.setState(({ choDirs }) => {
-    //   const newArr = choDirs.sort(function (a, b) {
-    //     if (a.name > b.count) {
-    //       return 1;
-    //     }
-    //     if (a.name < b.count) {
-    //       return -1;
-    //     }
-    //     // a должно быть равным b
-    //     return 0;
-    //   });  
+    var result = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
+      return sum + qStart + current + qEnd;
+    }, 0);
 
-    //     return {
-    //       choDirs: newArr
-    //     }
-    // })
-
-    console.log(this.state.choDirs.sort(function (a, b) {
-      if (a.name > b.count) {
-        return 1;
-      }
-      if (a.name < b.count) {
-        return -1;
-      }
-      // a должно быть равным b
-      return 0;
-    }) );
+    console.log(result.substr(1) + ' RETURN w');
 
     // session
-    // .run('MATCH (:Value{Name: $name0})<-[:field]-(w:Wagon)-[:field]->(:Value{Name: $name1}) RETURN w', {
-    //   name0: this.state.choDirs[0].value, name1: this.state.choDirs[1].value
-    //   //name0: 'Деповской ремонт', name1: 'прочие'
+    // .run('MATCH (:Value{Name: $name0})<-[:field]-(w:Wagon) RETURN w', {
+    //   name0: this.state.choDirs[0].name
+    //   //name0: 'платформы'//, name1: 'АО ВТБ ЛИЗИНГ'
     // })
-    // .subscribe({      
-    //   onNext: record => {
-    //     res.push(record._fields[0]);        
+    // .subscribe({
+
+    //   onNext: record => {        
+    //     res.push(record._fields[0]);               
     //   },
     //   onCompleted: () => {  
     //     session.close();// returns a Promise
