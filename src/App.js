@@ -142,9 +142,9 @@ class App extends Component {
   }
 
   addOutField = input => {
-    //console.log(input)
+    console.log(input)
     this.setState(({ outFields }) => {
-      const newArr = [...outFields, input.value];   
+      const newArr = [...outFields, input.name];   
 
         return {
           outFields: newArr
@@ -156,9 +156,9 @@ class App extends Component {
   render() {      
       return (      
       <main> 
-             {this.state.actDirs.map(n => {               
+        {this.state.actDirs.map(n => {               
           return <Selector key={n.value} name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
-       })}
+        })}
         
         <Selector name= {'Ввод'} values={this.state.allDirs} change ={this.addDir}/> 
         <button onClick={this.xfetch}>
@@ -167,6 +167,23 @@ class App extends Component {
 
 
         {/* <Selector name= {'Вывод'} values={this.state.allDirs} change ={this.addOutField}/>  */}
+
+        <table border="1">
+          <tr>
+            <th>_id</th>
+            
+            {this.state.outFields.map(n => {               
+              return <th>{n}</th>       
+            })}
+            <th><Selector name= {'Добавить'} values={this.state.allDirs} change ={this.addOutField}/> </th>
+            
+            
+          </tr>
+          {/* <tr>
+            <td>Ячейка 3</td>
+            <td>Ячейка 4</td>
+          </tr> */}
+        </table>
       </main>
     );
   }
