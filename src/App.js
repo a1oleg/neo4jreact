@@ -80,7 +80,7 @@ class App extends Component {
   };
 
   addValue = input => {
-    console.log(input)
+    //console.log(input)
 
     
     this.setState(({ choDirs }) => {
@@ -90,7 +90,7 @@ class App extends Component {
           choDirs: newArr
         }
     })
-    console.log(this.state.choDirs);
+    //console.log(this.state.choDirs);
   };
 
   xfetch = () => {    
@@ -109,40 +109,45 @@ class App extends Component {
     //   return 0;
     // });
     
-    let qStart = 'MATCH (:Value{Name:';
+    let qStart = 'MATCH (:Value{Name:"';
     
-    let qEnd = '})<-[:field]-(w:Wagon)\n';
+    let qEnd = '"})<-[:field]-(w:Wagon)\n';
 
-    var result = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
+    let qString = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
       return sum + qStart + current + qEnd;
-    }, 0);
+    }, 0);    
 
-    console.log(result.substr(1) + ' RETURN w');
+    qString += 'MATCH (v:Value)<-[:field]-(w)\n';
+    qString += 'WHERE v.Name IN $outFields\n';
+    qString += 'RETURN w, v.Name';
 
-    // session
-    // .run('MATCH (:Value{Name: $name0})<-[:field]-(w:Wagon) RETURN w', {
-    //   name0: this.state.choDirs[0].name
-    //   //name0: 'платформы'//, name1: 'АО ВТБ ЛИЗИНГ'
-    // })
-    // .subscribe({
+    console.log(qString.substr(1));
 
-    //   onNext: record => {        
-    //     res.push(record._fields[0]);               
-    //   },
-    //   onCompleted: () => {  
-    //     session.close();// returns a Promise
-    //     console.log(res)
+    session
+    .run(qString.substr(1), {
+      outFields: this.state.outFields
+      //name0: 'платформы'//, name1: 'АО ВТБ ЛИЗИНГ'
+    })
+    .subscribe({
+
+      onNext: record => {   
+        console.log({_id: record._fields[0].identity.low, foo:record._fields[1] });     
+        res.push({_id: record._fields[0].identity.low, foo:record._fields[1] });               
+      },
+      onCompleted: () => {  
+        session.close();// returns a Promise
+        console.log(res)
         
           
-    //   },
-    //   onError: error => {
-    //     console.log(error)
-    //   }
-    // });    
+      },
+      onError: error => {
+        console.log(error)
+      }
+    });    
   }
 
   addOutField = input => {
-    console.log(input)
+    //console.log(input)
     this.setState(({ outFields }) => {
       const newArr = [...outFields, input.name];   
 
@@ -150,7 +155,7 @@ class App extends Component {
           outFields: newArr
         }
     })
-    console.log(this.state.outFields)
+    //console.log(this.state.outFields)
   };
 
   render() {      
@@ -175,14 +180,17 @@ class App extends Component {
             {this.state.outFields.map(n => {               
               return <th>{n}</th>       
             })}
-            <th><Selector name= {'Добавить'} values={this.state.allDirs} change ={this.addOutField}/> </th>
-            
+
+            <th><Selector name= {'Добавить'} values={this.state.allDirs} change ={this.addOutField}/> </th>  
             
           </tr>
-          {/* <tr>
-            <td>Ячейка 3</td>
-            <td>Ячейка 4</td>
-          </tr> */}
+          <tr>
+            <td>...</td>
+            <td>...</td>
+            {this.state.outFields.map(n => {               
+                return <td>...</td>    
+              })}
+          </tr>
         </table>
       </main>
     );
