@@ -117,8 +117,8 @@ class App extends Component {
       return sum + qStart + current + qEnd;
     }, 0);    
 
-    qString += 'MATCH (v:Value)<-[:field]-(w)\n';
-    qString += 'WHERE v.Name IN $outFields\n';
+    qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
+    qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name';
 
     console.log(qString.substr(1));
