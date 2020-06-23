@@ -136,15 +136,25 @@ class App extends Component {
 
       onNext: record => {   
         //console.log({_id: record._fields[0].identity.low, foo:record._fields[1] });     
-        //res.push({_id: record._fields[0].identity.low, foo:record._fields[1] });  
-        res.set(record._fields[0].identity.low,record._fields[1]);
+        //res.push({_id: record._fields[0].identity.low, foo:record._fields[1] });
+        let x = res.get(record._fields[0].identity.low);  
+        if(typeof x !== "undefined"){
+          const newArr = [...x, record._fields[1]];
+
+          res.set(record._fields[0].identity.low, newArr);
+        }
+        else{
+          res.set(record._fields[0].identity.low, [record._fields[1]]);
+        }
         
+        
+         
       },
       onCompleted: () => {  
         session.close();// returns a Promise
         
         this.setState(({ myMap }) => {
-          //const newMap = [...actDirs, {name: param.value, values: res}];   
+            
     
             return {
               myMap: res
