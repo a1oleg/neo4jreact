@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, { Component,useState } from "react";
 import './App.css';
 import Selector from "./Selector";
+import MapComponent from "./MapComponent";
 var neo4j = require('neo4j-driver')
 
 class App extends Component {
@@ -14,14 +15,19 @@ class App extends Component {
       
       outFields: [],
       results: [],
-
+      myMap: new Map()
     };
     
     this.driver = neo4j.driver(
       'bolt://localhost:7687',
       neo4j.auth.basic('neo4j', 'letmein')
-    )
-   
+    );
+    
+    this.getDirs();
+    
+  };
+
+  getDirs = () => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
@@ -43,8 +49,6 @@ class App extends Component {
       }
     });    
   };
-
-  
 
   addDir = (param) => {
     //console.log(param)
@@ -95,7 +99,7 @@ class App extends Component {
 
   xfetch = () => {    
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    const res = [];
+    const res = new Map();
     
     // //по обратному порядку каунта добавлять в запрос
     // let sorted = this.state.choDirs.sort(function (a, b) {
@@ -131,14 +135,23 @@ class App extends Component {
     .subscribe({
 
       onNext: record => {   
-        console.log({_id: record._fields[0].identity.low, foo:record._fields[1] });     
-        res.push({_id: record._fields[0].identity.low, foo:record._fields[1] });               
+        //console.log({_id: record._fields[0].identity.low, foo:record._fields[1] });     
+        //res.push({_id: record._fields[0].identity.low, foo:record._fields[1] });  
+        res.set(record._fields[0].identity.low,record._fields[1]);
+        
       },
       onCompleted: () => {  
         session.close();// returns a Promise
-        console.log(res)
         
-          
+        this.setState(({ myMap }) => {
+          //const newMap = [...actDirs, {name: param.value, values: res}];   
+    
+            return {
+              myMap: res
+            }
+        });   
+        //console.log(res);
+        console.log(this.state.myMap);
       },
       onError: error => {
         console.log(error)
@@ -192,6 +205,7 @@ class App extends Component {
               })}
           </tr>
         </table>
+        <MapComponent/>
       </main>
     );
   }
