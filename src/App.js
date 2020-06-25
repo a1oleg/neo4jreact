@@ -14,7 +14,7 @@ class App extends Component {
       choDirs: [],
       
       outFields: [],
-      results: [],
+      //results: [],
       myMap: new Map()
     };
     
@@ -123,7 +123,8 @@ class App extends Component {
 
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
-    qString += 'RETURN w, v.Name';
+    qString += 'RETURN w, v.Name ';
+    qString += 'LIMIT 10';
 
     console.log(qString.substr(1));
 
@@ -145,17 +146,12 @@ class App extends Component {
         }
         else{
           res.set(record._fields[0].identity.low, [record._fields[1]]);
-        }
-        
-        
-         
+        } 
       },
       onCompleted: () => {  
         session.close();// returns a Promise
         
         this.setState(({ myMap }) => {
-            
-    
             return {
               myMap: res
             }
@@ -193,9 +189,6 @@ class App extends Component {
           Запрос
         </button>
 
-
-        {/* <Selector name= {'Вывод'} values={this.state.allDirs} change ={this.addOutField}/>  */}
-
         <table border="1">
           <tr>
             <th>_id</th>
@@ -214,8 +207,18 @@ class App extends Component {
                 return <td>...</td>    
               })}
           </tr>
+
+          {this.state.myMap.forEach((value, key, map) =>  {   
+                console.log(key)           
+                return <tr>
+                  <td>{key}</td>  
+                    {value.map(v => {               
+                      return <td>{v}</td>
+                      })}
+                </tr>    
+              })}
         </table>
-        <MapComponent/>
+        
       </main>
     );
   }
