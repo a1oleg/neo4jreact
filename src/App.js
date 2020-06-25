@@ -124,7 +124,7 @@ class App extends Component {
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
-    qString += 'LIMIT 10';
+    qString += 'LIMIT 3';
 
     console.log(qString.substr(1));
 
@@ -207,16 +207,27 @@ class App extends Component {
                 return <td>...</td>    
               })}
           </tr>
-
-          {this.state.myMap.forEach((value, key, map) =>  {   
-                console.log(key)           
-                return <tr>
-                  <td>{key}</td>  
-                    {value.map(v => {               
-                      return <td>{v}</td>
-                      })}
-                </tr>    
+{/* 
+          <tr>
+            <td>...</td>
+            <td>...</td>
+            {this.state.myMap.keys(n => { 
+              console.log(n)              
+                return <td>{n}</td>    
               })}
+          </tr> */}
+          {[...this.state.myMap].map(item => {
+            console.log(item)
+            return <tr>
+                  <td>{item[0]}</td>  
+                    {/* {value.map(v => {               
+                      return <td>{v}</td>
+                      })} */}
+                </tr> 
+            })
+  
+
+          }
         </table>
         
       </main>
