@@ -10,7 +10,8 @@
     "neo4j-driver": "^4.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "xlsx": "^0.16.2"
   },
   "scripts": {
     "start": "react-scripts start",
