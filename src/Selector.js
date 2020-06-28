@@ -23,8 +23,8 @@ class Selector extends Component {
       <label >
         {this.props.name}
        
-        <select onChange={this.handleChange} defaultValue={'...'} >
-        {/* <option selected>...</option> */}
+        <select onChange={this.handleChange} >
+        <option selected>...</option>
         {this.props.values.map(v => {
          return <option key={v.name} value={v.name} count={v.count} >{v.name} {v.count}</option>
        })}

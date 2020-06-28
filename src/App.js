@@ -11,7 +11,7 @@ class App extends Component {
 
     this.state = {
       allDirs: [], //[{name: 'Мать справочников',values: []}],
-      actDirs: [],
+      inDirs: [],
       choDirs: [],
       
       outFields: [],
@@ -69,11 +69,11 @@ class App extends Component {
       },
       onCompleted: () => {  
         session.close();// returns a Promise
-          this.setState(({ actDirs }) => {
-          const newArr = [...actDirs, {name: param.value, values: res}];   
+          this.setState(({ inDirs }) => {
+          const newArr = [...inDirs, {name: param.value, values: res}];   
     
             return {
-              actDirs: newArr
+              inDirs: newArr
             }
         })
           
@@ -100,51 +100,26 @@ class App extends Component {
 
   xfetch = () => {    
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    const res = new Map();
+        
+    // по обратному порядку каунта добавлять в запрос    
     
-    // //по обратному порядку каунта добавлять в запрос
-    // let sorted = this.state.choDirs.sort(function (a, b) {
-    //   if (a.name > b.count) {
-    //     return 1;
-    //   }
-    //   if (a.name < b.count) {
-    //     return -1;
-    //   }
-    //   // a должно быть равным b
-    //   return 0;
-    // });
+    let qString = 'MATCH (x:Value)<-[:field]-(w:Wagon)\n WHERE x.Name IN $inFields\n';
     
-    let qStart = 'MATCH (:Value{Name:"';
-    
-    let qEnd = '"})<-[:field]-(w:Wagon)\n';
-
-    let qStart2 = 'MATCH (x:Value)<-[:field]-(w:Wagon)\n';
-    let qEnd2 = 'WHERE x.Name IN $inFields\n';
-
-
-    // let qString = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
-    //   return sum + qStart + current + qEnd;
-    // }, 0);    
-
-    let qString = qStart2 + qEnd2
-
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
-    qString += 'LIMIT 6';
+    //qString += 'LIMIT 6';
 
     console.log(qString);
-
+    
+    const res = new Map();
     session
     .run(qString, {
       outFields: this.state.outFields
       ,inFields: this.state.choDirs.map(n => n.name)
     })
     .subscribe({
-
-      onNext: record => {   
-        //console.log({_id: record._fields[0].identity.low, foo:record._fields[1] });     
-        //res.push({_id: record._fields[0].identity.low, foo:record._fields[1] });
+      onNext: record => {       
         let x = res.get(record._fields[0].identity.low);  
         if(typeof x !== "undefined"){
           const newArr = [...x, record._fields[1]];
@@ -198,33 +173,36 @@ class App extends Component {
   render() {      
       return (      
       <main> 
-        {this.state.actDirs.map(n => {               
-          return <Selector key={n.value} name= {n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
+        {this.state.inDirs.map(n => {               
+          return <Selector key={n.value} name= {'Выбрать значение для ' + n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
         })}
-        
-        <Selector name= {'Ввод'} values={this.state.allDirs} change ={this.addDir}/> 
+        <br></br>
+        <Selector name= {'Добавить спаравочник'} values={this.state.allDirs} change ={this.addDir}/>
+        <br></br> 
         <button onClick={this.xfetch}>
           Запрос
         </button>
-
-        <table border="1" id="data-table">
-          <tr>
-            <th>_id</th>
+        <br></br>
+        <br></br>
+        <table border="1" >
+          <thead>
+            <td>_id</td>
             
             {this.state.outFields.map(n => {               
-              return <th>{n}</th>       
+              return <td>{n}</td>       
             })}
 
-            <th><Selector name= {'Добавить'} values={this.state.allDirs} change ={this.addOutField}/> </th>  
-            
-          </tr>
-          <tr>
+            <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>  
+            <tr>
             <td>...</td>
             <td>...</td>
             {this.state.outFields.map(n => {               
                 return <td>...</td>    
               })}
-          </tr>
+          </tr>            
+          </thead>
+
+          <tbody id="data-table">
 
           {[...this.state.myMap].map(item => {
             console.log(item)
@@ -235,11 +213,11 @@ class App extends Component {
                       })}
                 </tr> 
 
-            })
-  
-
+            }) 
           }
+          </tbody>
         </table>
+        <br></br>
         <input type="submit" value="Export to XLSX!" onClick={this.doit} ></input>
         {/* onclick={this.doit('xlsx')} */}
       </main>
