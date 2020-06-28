@@ -240,7 +240,7 @@ class App extends Component {
 
           }
         </table>
-        <input type="submit" value="Export to XLSX!" onclick={this.doit} ></input>
+        <input type="submit" value="Export to XLSX!" onClick={this.doit} ></input>
         {/* onclick={this.doit('xlsx')} */}
       </main>
     );
