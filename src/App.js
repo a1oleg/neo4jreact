@@ -117,21 +117,27 @@ class App extends Component {
     
     let qEnd = '"})<-[:field]-(w:Wagon)\n';
 
-    let qString = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
-      return sum + qStart + current + qEnd;
-    }, 0);    
+    let qStart2 = 'MATCH (v:Value)<-[:field]-(w:Wagon)\n';
+    let qEnd2 = 'WHERE v.Name IN $inFields\n';
+
+
+    // let qString = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
+    //   return sum + qStart + current + qEnd;
+    // }, 0);    
+
+    let qString = qStart2 + qEnd2
 
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
     qString += 'LIMIT 3';
 
-    console.log(qString.substr(1));
+    console.log(qString);
 
     session
-    .run(qString.substr(1), {
+    .run(qString, {
       outFields: this.state.outFields
-      //name0: 'платформы'//, name1: 'АО ВТБ ЛИЗИНГ'
+      ,inFields: this.state.choDirs.map(n => n.name)
     })
     .subscribe({
 
@@ -207,23 +213,16 @@ class App extends Component {
                 return <td>...</td>    
               })}
           </tr>
-{/* 
-          <tr>
-            <td>...</td>
-            <td>...</td>
-            {this.state.myMap.keys(n => { 
-              console.log(n)              
-                return <td>{n}</td>    
-              })}
-          </tr> */}
+
           {[...this.state.myMap].map(item => {
             console.log(item)
             return <tr>
                   <td>{item[0]}</td>  
-                    {/* {value.map(v => {               
+                    {item[1].map(v => {               
                       return <td>{v}</td>
-                      })} */}
+                      })}
                 </tr> 
+
             })
   
 
