@@ -117,8 +117,8 @@ class App extends Component {
     
     let qEnd = '"})<-[:field]-(w:Wagon)\n';
 
-    let qStart2 = 'MATCH (v:Value)<-[:field]-(w:Wagon)\n';
-    let qEnd2 = 'WHERE v.Name IN $inFields\n';
+    let qStart2 = 'MATCH (x:Value)<-[:field]-(w:Wagon)\n';
+    let qEnd2 = 'WHERE x.Name IN $inFields\n';
 
 
     // let qString = this.state.choDirs.map(n => n.name).reduce(function(sum, current) {
@@ -183,6 +183,16 @@ class App extends Component {
     //console.log(this.state.outFields)
   };
 
+  
+  doit = (type, fn, dl) => {
+	var elt = document.getElementById('data-table');
+	var wb = XLSX.utils.table_to_book(elt, {sheet:"Sheet JS"});
+	return dl ?
+		XLSX.write(wb, {bookType:type, bookSST:true, type: 'base64'}) :
+		XLSX.writeFile(wb, fn || ('SheetJSTableExport.' + (type || 'xlsx')));
+}
+
+
   render() {      
       return (      
       <main> 
@@ -195,7 +205,7 @@ class App extends Component {
           Запрос
         </button>
 
-        <table border="1">
+        <table border="1" id="data-table">
           <tr>
             <th>_id</th>
             
@@ -228,7 +238,7 @@ class App extends Component {
 
           }
         </table>
-        
+        <input type="submit" value="Export to XLSX!" onclick={this.doit('xlsx')}></input>
       </main>
     );
   }
