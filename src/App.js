@@ -11,13 +11,12 @@ class App extends Component {
 
     this.state = {
       allDirs: [], //[{name: 'Мать справочников',values: []}],
-      //inDirs: [],
-      inDirs: new Map(),
+      inDirs: [],
       choDirs: [],
       
       outFields: [],
-      
-      results: new Map()
+      //results: [],
+      myMap: new Map()
     };
     
     this.driver = neo4j.driver(
@@ -53,9 +52,9 @@ class App extends Component {
   };
 
   addDir = (param) => {
-    console.log(param);
+    //console.log(param)
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    const res = this.state.inDirs;
+    const res = [];
     session
     .run('MATCH (:Dir{Name: $nameParam})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
       nameParam: param.name
@@ -65,24 +64,16 @@ class App extends Component {
         //console.log(keys)
       //},
       onNext: record => {
-        console.log(record);
-        let x = res.get(record._fields[0]);  
-        if(typeof x !== "undefined"){
-          const newArr = [...x, record._fields[1]];
-
-          res.set(record._fields[0], newArr);
-        }
-        else{
-          res.set(record._fields[0], [record._fields[1]]);
-        }
+        res.push({name:record._fields[0], count:record._fields[1].low});
+        //console.log(record._fields[1].low)
       },
       onCompleted: () => {  
-        session.close();
+        session.close();// returns a Promise
           this.setState(({ inDirs }) => {
-          //const newArr = [...inDirs, {name: param.value, values: res}];   
+          const newArr = [...inDirs, {name: param.value, values: res}];   
     
             return {
-              inDirs: res
+              inDirs: newArr
             }
         })
           
@@ -120,7 +111,7 @@ class App extends Component {
     //qString += 'LIMIT 6';
 
     console.log(qString);
-
+    
     const res = new Map();
     session
     .run(qString, {
@@ -142,13 +133,13 @@ class App extends Component {
       onCompleted: () => {  
         session.close();// returns a Promise
         
-        this.setState(({ results }) => {
+        this.setState(({ myMap }) => {
             return {
-              results: res
+              myMap: res
             }
         });   
         //console.log(res);
-        console.log(this.state.results);
+        console.log(this.state.myMap);
       },
       onError: error => {
         console.log(error)
@@ -182,13 +173,15 @@ class App extends Component {
   render() {      
       return (      
       <main> 
-        {[...this.state.inDirs].map(item => {               
-          return <Selector key={item[0]} name= {'Выбрать значение для ' + item[0]} values = {item[1]}  change ={this.addValue}/>//change ={this.addDir}       
+        {this.state.inDirs.map(n => {               
+          return <Selector key={n.value} name= {'Выбрать значение для ' + n.name} values = {n.values}  change ={this.addValue}/>//change ={this.addDir}       
         })}
         <br></br>
-        <Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/>
+        <Selector name= {'Добавить спаравочник'} values={this.state.allDirs} change ={this.addDir}/>
         <br></br> 
-        <button onClick={this.xfetch}>    Запрос   </button>
+        <button onClick={this.xfetch}>
+          Запрос
+        </button>
         <br></br>
         <br></br>
         <table border="1" >
@@ -211,8 +204,8 @@ class App extends Component {
 
           <tbody id="data-table">
 
-          {[...this.state.results].map(item => {
-            //console.log(item)
+          {[...this.state.myMap].map(item => {
+            console.log(item)
             return <tr>
                   <td>{item[0]}</td>  
                     {item[1].map(v => {               
