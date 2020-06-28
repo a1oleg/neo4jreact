@@ -53,9 +53,11 @@ class App extends Component {
   };
 
   addDir = (param) => {
-    console.log(param);
+    //console.log(param);
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
+
     const res = this.state.inDirs;
+
     session
     .run('MATCH (:Dir{Name: $nameParam})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
       nameParam: param.name
@@ -66,14 +68,15 @@ class App extends Component {
       //},
       onNext: record => {
         console.log(record);
-        let x = res.get(record._fields[0]);  
-        if(typeof x !== "undefined"){
-          const newArr = [...x, record._fields[1]];
 
-          res.set(record._fields[0], newArr);
+        let x = res.get(param.name);  
+        if(typeof x !== "undefined"){
+          const newArr = [...x, {name: record._fields[0], count: record._fields[1].low}];
+
+          res.set(param.name, newArr);
         }
         else{
-          res.set(record._fields[0], [record._fields[1]]);
+          res.set(param.name, [{name: record._fields[0], count: record._fields[1].low}]);
         }
       },
       onCompleted: () => {  
@@ -85,7 +88,7 @@ class App extends Component {
               inDirs: res
             }
         })
-          
+        console.log(this.state.inDirs)
       },
       onError: error => {
         console.log(error)
@@ -148,7 +151,7 @@ class App extends Component {
             }
         });   
         //console.log(res);
-        console.log(this.state.results);
+        console.log([...this.state.inDirs]);
       },
       onError: error => {
         console.log(error)
@@ -182,12 +185,14 @@ class App extends Component {
   render() {      
       return (      
       <main> 
-        {[...this.state.inDirs].map(item => {               
-          return <Selector key={item[0]} name= {'Выбрать значение для ' + item[0]} values = {item[0]}  change ={this.addValue}/>//change ={this.addDir}       
-        })}
+        
         <br></br>
         <Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/>
-        <br></br> 
+        <br></br>
+        {[...this.state.inDirs].map(item => {               
+          return <Selector key={item[0]} name= {'Выбрать значение для ' + item[0]} values = {item[1]}  change ={this.addValue}/>//change ={this.addDir}       
+        })}
+        <br></br>
         <button onClick={this.xfetch}>    Запрос   </button>
         <br></br>
         <br></br>
