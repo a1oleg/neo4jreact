@@ -1,4 +1,5 @@
 import React, { Component,useState } from "react";
+import XLSX from "xlsx";
 import './App.css';
 import Selector from "./Selector";
 import MapComponent from "./MapComponent";
@@ -130,7 +131,7 @@ class App extends Component {
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
-    qString += 'LIMIT 3';
+    qString += 'LIMIT 6';
 
     console.log(qString);
 
@@ -185,11 +186,12 @@ class App extends Component {
 
   
   doit = (type, fn, dl) => {
+    console.log('item');
 	var elt = document.getElementById('data-table');
 	var wb = XLSX.utils.table_to_book(elt, {sheet:"Sheet JS"});
 	return dl ?
-		XLSX.write(wb, {bookType:type, bookSST:true, type: 'base64'}) :
-		XLSX.writeFile(wb, fn || ('SheetJSTableExport.' + (type || 'xlsx')));
+		XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'base64'}) :
+		XLSX.writeFile(wb, fn || ('SheetJSTableExport.' + 'xlsx'));
 }
 
 
@@ -238,7 +240,8 @@ class App extends Component {
 
           }
         </table>
-        <input type="submit" value="Export to XLSX!" onclick={this.doit('xlsx')}></input>
+        <input type="submit" value="Export to XLSX!" onclick={this.doit} ></input>
+        {/* onclick={this.doit('xlsx')} */}
       </main>
     );
   }
