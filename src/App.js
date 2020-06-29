@@ -132,9 +132,9 @@ class App extends Component {
     qString += 'RETURN w, v.Name ';
     //qString += 'LIMIT 6';
 
-    console.log([...this.state.choDirs].map(n => n[1]).reduce(function(previousValue, currentValue, index, array) {
-      return [...previousValue, ...currentValue];
-    }));   
+    // console.log([...this.state.choDirs].map(n => n[1]).reduce(function(previousValue, currentValue, index, array) {
+    //   return [...previousValue, ...currentValue];
+    // }));   
 
 
     console.log(qString);
@@ -211,8 +211,7 @@ class App extends Component {
           return <Selector2 key={item[0]} prefix={'Выбрать значение для '} name={item[0]} values ={item[1]}  change={this.addValue}/>//change ={this.addDir}       
         })}
         <br></br>
-        <button onClick={this.xfetch}>    Запрос   </button>
-        <br></br>
+        
         <br></br>
         <table border="1" >
           <thead>
@@ -230,9 +229,23 @@ class App extends Component {
                 return <td>...</td>    
               })}
           </tr>            
+          </thead>          
+        </table>
+
+        <br></br>
+        <button onClick={this.xfetch}>    Запрос   </button>
+        <br></br>
+
+        <table border="1" id="data-table">
+          <thead>
+          <td>_id</td>   
+          {this.state.outFields.map(n => {               
+                return <td>{n}</td>    
+              })}    
+                      
           </thead>
 
-          <tbody id="data-table">
+          <tbody >
 
           {[...this.state.results].map(item => {
             //console.log(item)
