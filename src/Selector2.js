@@ -15,7 +15,7 @@ class Selector2 extends Component {
 
       <form>
       <label >
-      {this.props.prefix}{this.props.name}       
+      {this.props.prefix}     
         <select onChange={this.handleChange} >
         <option selected>...</option>
         {this.props.values.map(v => {

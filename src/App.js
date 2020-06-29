@@ -3,7 +3,6 @@ import XLSX from "xlsx";
 import './App.css';
 import Selector from "./Selector";
 import Selector2 from "./Selector2";
-import MapComponent from "./MapComponent";
 var neo4j = require('neo4j-driver')
 
 class App extends Component {
@@ -11,8 +10,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      allDirs: [], //[{name: 'Мать справочников',values: []}],
-      //inDirs: [],
+      allDirs: [],
+      
       inDirs: new Map(),
       choDirs: new Map(),
       
@@ -117,6 +116,7 @@ class App extends Component {
       }        
     })
     console.log(this.state.choDirs);
+    console.log([...this.state.choDirs.get("Виды работ")]);
   };
 
   xfetch = () => {    
@@ -202,15 +202,27 @@ class App extends Component {
 
   render() {      
       return (      
-      <main> 
+      <main>
         
-        <br></br>
         <Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/>
         <br></br>
-        {[...this.state.inDirs].map(item => {               
-          return <Selector2 key={item[0]} prefix={'Выбрать значение для '} name={item[0]} values ={item[1]}  change={this.addValue}/>//change ={this.addDir}       
-        })}
-        <br></br>
+        <table border="1"> 
+          <tbody >
+          {[...this.state.inDirs].map(item => {            
+            return <tr>
+                  <td>{item[0]}</td>  
+                  <td><Selector2 key={item[0]} prefix={'Добавить значение'} name={item[0]} values ={item[1]}  change={this.addValue}/></td>  
+                  
+                    {/* {this.state.choDirs.get(item[0]).map(v => {               
+                        return <td>{v}</td>
+                        })} */}
+                </tr>
+            }) 
+          }
+          </tbody>
+        </table>
+
+        
         
         <br></br>
         <table border="1" >
