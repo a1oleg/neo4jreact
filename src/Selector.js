@@ -21,7 +21,7 @@ class Selector extends Component {
 
       <form>
       <label >
-        {this.props.name}
+      {this.props.name}
        
         <select onChange={this.handleChange} >
         <option selected>...</option>

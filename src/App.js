@@ -2,6 +2,7 @@ import React, { Component,useState } from "react";
 import XLSX from "xlsx";
 import './App.css';
 import Selector from "./Selector";
+import Selector2 from "./Selector2";
 import MapComponent from "./MapComponent";
 var neo4j = require('neo4j-driver')
 
@@ -13,7 +14,7 @@ class App extends Component {
       allDirs: [], //[{name: 'Мать справочников',values: []}],
       //inDirs: [],
       inDirs: new Map(),
-      choDirs: [],
+      choDirs: new Map(),
       
       outFields: [],
       
@@ -33,8 +34,8 @@ class App extends Component {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     const res = [];
     session
-    .run('MATCH (d{Name: $nameParam})-[:value]->(v) RETURN v.Name', {
-      nameParam: 'Мать справочников'
+    .run('MATCH (d{Name: $nameinput})-[:value]->(v) RETURN v.Name', {
+      nameinput: 'Мать справочников'
     })
     .subscribe({     
       onNext: record => {
@@ -52,43 +53,43 @@ class App extends Component {
     });    
   };
 
-  addDir = (param) => {
-    //console.log(param);
+  addDir = (input) => {
+    //console.log(input);
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
 
-    const res = this.state.inDirs;
+    let res = this.state.inDirs;
 
     session
-    .run('MATCH (:Dir{Name: $nameParam})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
-      nameParam: param.name
+    .run('MATCH (:Dir{Name: $nameinput})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
+      nameinput: input.name
     })
     .subscribe({
       //onKeys: keys => {
         //console.log(keys)
       //},
       onNext: record => {
-        console.log(record);
+        //console.log(record);
 
-        let x = res.get(param.name);  
+        let x = res.get(input.name);  
         if(typeof x !== "undefined"){
           const newArr = [...x, {name: record._fields[0], count: record._fields[1].low}];
 
-          res.set(param.name, newArr);
+          res.set(input.name, newArr);
         }
         else{
-          res.set(param.name, [{name: record._fields[0], count: record._fields[1].low}]);
+          res.set(input.name, [{name: record._fields[0], count: record._fields[1].low}]);
         }
       },
       onCompleted: () => {  
         session.close();
           this.setState(({ inDirs }) => {
-          //const newArr = [...inDirs, {name: param.value, values: res}];   
+          //const newArr = [...inDirs, {name: input.value, values: res}];   
     
             return {
               inDirs: res
             }
         })
-        console.log(this.state.inDirs)
+        //console.log(this.state.inDirs)
       },
       onError: error => {
         console.log(error)
@@ -98,19 +99,28 @@ class App extends Component {
 
   addValue = input => {
     //console.log(input)
+    let newMap = this.state.choDirs;
 
-    
-    this.setState(({ choDirs }) => {
-      const newArr = [...choDirs, input];   
+    let x = newMap.get(input.name); 
+    if(typeof x !== "undefined"){
+      const newArr = [...x, input.value];
 
-        return {
-          choDirs: newArr
-        }
+      newMap.set(input.name, newArr);
+    }
+    else{
+      newMap.set(input.name, [input.value]);
+    }
+
+    this.setState(() => {  
+      return {
+        choDirs: newMap
+      }        
     })
-    //console.log(this.state.choDirs);
+    console.log(this.state.choDirs);
   };
 
   xfetch = () => {    
+    
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
         
     // по обратному порядку каунта добавлять в запрос    
@@ -122,13 +132,21 @@ class App extends Component {
     qString += 'RETURN w, v.Name ';
     //qString += 'LIMIT 6';
 
+    console.log([...this.state.choDirs].map(n => n[1]).reduce(function(previousValue, currentValue, index, array) {
+      return [...previousValue, ...currentValue];
+    }));   
+
+
     console.log(qString);
 
     const res = new Map();
     session
     .run(qString, {
+      inFields: [...this.state.choDirs].map(n => n[1]).reduce(function(previousValue, currentValue, index, array) {
+        return [...previousValue, ...currentValue];
+      }),
       outFields: this.state.outFields
-      ,inFields: this.state.choDirs.map(n => n.name)
+      
     })
     .subscribe({
       onNext: record => {       
@@ -151,7 +169,7 @@ class App extends Component {
             }
         });   
         //console.log(res);
-        console.log([...this.state.inDirs]);
+        //console.log([...this.state.results]);
       },
       onError: error => {
         console.log(error)
@@ -190,7 +208,7 @@ class App extends Component {
         <Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/>
         <br></br>
         {[...this.state.inDirs].map(item => {               
-          return <Selector key={item[0]} name= {'Выбрать значение для ' + item[0]} values = {item[1]}  change ={this.addValue}/>//change ={this.addDir}       
+          return <Selector2 key={item[0]} prefix={'Выбрать значение для '} name={item[0]} values ={item[1]}  change={this.addValue}/>//change ={this.addDir}       
         })}
         <br></br>
         <button onClick={this.xfetch}>    Запрос   </button>
