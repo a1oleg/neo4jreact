@@ -1,9 +1,10 @@
 import React, { Component,useState } from "react";
 import XLSX from "xlsx";
 import './App.css';
+import InDir from "./InDir";
 import Selector from "./Selector";
-import Selector2 from "./Selector2";
-var neo4j = require('neo4j-driver')
+
+let neo4j = require('neo4j-driver')
 
 class App extends Component {
   constructor(props) {
@@ -11,8 +12,8 @@ class App extends Component {
 
     this.state = {
       allDirs: [],
-      
-      inDirs: new Map(),
+      inDirs: [],
+      //inDirs: new Map(),
       choDirs: new Map(),
       
       outFields: [],
@@ -52,48 +53,14 @@ class App extends Component {
     });    
   };
 
-  addDir = (input) => {
-    //console.log(input);
-    const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-
-    let res = this.state.inDirs;
-
-    session
-    .run('MATCH (:Dir{Name: $nameinput})-[:value]->(v)<-[r:field]-(:Wagon) RETURN v.Name, count(r)', {
-      nameinput: input.name
-    })
-    .subscribe({
-      //onKeys: keys => {
-        //console.log(keys)
-      //},
-      onNext: record => {
-        //console.log(record);
-
-        let x = res.get(input.name);  
-        if(typeof x !== "undefined"){
-          const newArr = [...x, {name: record._fields[0], count: record._fields[1].low}];
-
-          res.set(input.name, newArr);
+  addDir = (input) => {    
+    this.setState(({ inDirs }) => {
+      const newArr = [...inDirs, input.name]; 
+      
+        return {
+          inDirs: newArr
         }
-        else{
-          res.set(input.name, [{name: record._fields[0], count: record._fields[1].low}]);
-        }
-      },
-      onCompleted: () => {  
-        session.close();
-          this.setState(({ inDirs }) => {
-          //const newArr = [...inDirs, {name: input.value, values: res}];   
-    
-            return {
-              inDirs: res
-            }
-        })
-        //console.log(this.state.inDirs)
-      },
-      onError: error => {
-        console.log(error)
-      }
-    });    
+      })
   };
 
   addValue = input => {
@@ -190,12 +157,11 @@ class App extends Component {
   };  
 
   removeInDir = (event) => { 
-    console.log(event.target)
-    let x =  event.target.getAttribute('foo');    
-    let newMap = this.state.inDirs.delete(x);
-    this.setState(() => {
+    //let x =  event.target.getAttribute('foo');
+    this.setState(({ inDirs }) => {
+      const newArr = inDirs.filter(item => item !== event);
         return {
-          inDirs: newMap
+          inDirs: newArr
         }
     })
   }
@@ -211,6 +177,7 @@ class App extends Component {
     })
   }
 
+  
   exportTable = (type, fn, dl) => {
     console.log('item');
 	var elt = document.getElementById('data-table');
@@ -228,16 +195,7 @@ class App extends Component {
         <table border="1"> 
           <tbody >
           {[...this.state.inDirs].map(item => {            
-            return <tr>
-                  <td>{item[0]}
-                  <input type="submit" foo={item[0]} value="X" onClick={this.removeInDir}></input>
-                  </td>  
-                  <td><Selector2 key={item[0]} prefix={'Добавить значение'} name={item[0]} values ={item[1]}  change={this.addValue}/></td>  
-                  
-                    {/* {this.state.choDirs.get(item[0]).map(v => {               
-                        return <td>{v}</td>
-                        })} */}
-                </tr>
+            return <InDir name={item} remove ={this.removeInDir} />
             }) 
           }
           <tr>
