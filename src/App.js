@@ -116,7 +116,7 @@ class App extends Component {
       }        
     })
     console.log(this.state.choDirs);
-    console.log([...this.state.choDirs.get("Виды работ")]);
+    //console.log([...this.state.choDirs.get("Виды работ")]);
   };
 
   xfetch = () => {    
@@ -178,7 +178,7 @@ class App extends Component {
   }
 
   addOutField = input => {
-    //console.log(input)
+    
     this.setState(({ outFields }) => {
       const newArr = [...outFields, input.name];   
 
@@ -187,24 +187,31 @@ class App extends Component {
         }
     })
     //console.log(this.state.outFields)
-  };
-
+  };  
   
-  doit = (type, fn, dl) => {
+  removeOutField = (event) => {    
+    let x =  event.target.getAttribute('foo');
+    this.setState(({ outFields }) => {
+      const newArr = outFields.filter(item => item !== x);
+        return {
+          outFields: newArr
+        }
+    })
+  }
+
+  exportTable = (type, fn, dl) => {
     console.log('item');
 	var elt = document.getElementById('data-table');
 	var wb = XLSX.utils.table_to_book(elt, {sheet:"Sheet JS"});
 	return dl ?
 		XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'base64'}) :
 		XLSX.writeFile(wb, fn || ('SheetJSTableExport.' + 'xlsx'));
-}
+  }
 
 
   render() {      
       return (      
-      <main>
-        
-        <Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/>
+      <main>        
         <br></br>
         <table border="1"> 
           <tbody >
@@ -219,48 +226,37 @@ class App extends Component {
                 </tr>
             }) 
           }
+          <tr>
+                  <td><Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/></td>  
+                 
+          </tr>
           </tbody>
         </table>
 
-        
-        
+               
         <br></br>
         <table border="1" >
           <thead>
-            <td>_id</td>
-            
+            <td>_id</td>            
             {this.state.outFields.map(n => {               
-              return <td>{n}</td>       
+              return <td>{n}
+              <input type="submit" foo={n} value="X" onClick={this.removeOutField}></input>
+              </td>       
             })}
 
-            <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>  
-            <tr>
-            <td>...</td>
-            <td>...</td>
+          <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>
+          </thead>    
+
+          <tbody >
+          <tr>
+            <td>...</td> <td>...</td>
             {this.state.outFields.map(n => {               
                 return <td>...</td>    
               })}
-          </tr>            
-          </thead>          
-        </table>
-
-        <br></br>
-        <button onClick={this.xfetch}>    Запрос   </button>
-        <br></br>
-
-        <table border="1" id="data-table">
-          <thead>
-          <td>_id</td>   
-          {this.state.outFields.map(n => {               
-                return <td>{n}</td>    
-              })}    
-                      
-          </thead>
-
-          <tbody >
+          </tr>   
 
           {[...this.state.results].map(item => {
-            //console.log(item)
+            
             return <tr>
                   <td>{item[0]}</td>  
                     {item[1].map(v => {               
@@ -270,11 +266,14 @@ class App extends Component {
 
             }) 
           }
-          </tbody>
+          </tbody>      
         </table>
+
         <br></br>
-        <input type="submit" value="Export to XLSX!" onClick={this.doit} ></input>
-        {/* onclick={this.doit('xlsx')} */}
+        <button onClick={this.xfetch}>    Запрос   </button>
+        <br></br>
+        <input type="submit" value="Выгрузить в Excel" onClick={this.exportTable}></input>
+        
       </main>
     );
   }
