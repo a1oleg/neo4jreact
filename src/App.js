@@ -188,6 +188,18 @@ class App extends Component {
     })
     //console.log(this.state.outFields)
   };  
+
+  removeInDir = (event) => { 
+    console.log(event.target)
+    let x =  event.target.getAttribute('foo');    
+    let newMap = this.state.inDirs.delete(x);
+    this.setState(() => {
+        return {
+          inDirs: newMap
+        }
+    })
+  }
+
   
   removeOutField = (event) => {    
     let x =  event.target.getAttribute('foo');
@@ -217,7 +229,9 @@ class App extends Component {
           <tbody >
           {[...this.state.inDirs].map(item => {            
             return <tr>
-                  <td>{item[0]}</td>  
+                  <td>{item[0]}
+                  <input type="submit" foo={item[0]} value="X" onClick={this.removeInDir}></input>
+                  </td>  
                   <td><Selector2 key={item[0]} prefix={'Добавить значение'} name={item[0]} values ={item[1]}  change={this.addValue}/></td>  
                   
                     {/* {this.state.choDirs.get(item[0]).map(v => {               
