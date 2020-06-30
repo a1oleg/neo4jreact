@@ -10,7 +10,8 @@ class InDir extends Component {
     
         this.state = {
           allValues: [],          
-          choValues: [],          
+          //choValues: [],  
+          choValues:new Set()        
         };        
         this.driver = neo4j.driver(
           'bolt://localhost:7687',
@@ -44,15 +45,39 @@ class InDir extends Component {
         });    
       };
     
-      addValue = (input) => { 
+      pickValue = (input) => { 
         console.log(input.value);  
         this.setState(({ choValues }) => {
-          const newArr = [...choValues, input.value]; 
-          
+          //const newArr = [...choValues, input.value];     
+          const newSet = choValues.add(input.value);       
             return {
-              inDirs: newArr
+                choValues: newSet
             }
-          })
+          });
+        
+        //   this.setState(({ allValues }) => {
+        //     const newArr = allValues.filter(item => item !== input.value);
+        //       return {
+        //         allValues: newArr
+        //       }
+        //   })
+      };
+
+      delValue = (input) => { 
+        console.log(input.value);  
+        this.setState(({ choValues }) => {
+            const newSet = choValues.delete(input.value);          
+            return {
+                choValues: newSet
+            }
+          });
+        
+        //   this.setState(({ choValues }) => {
+        //     const newArr = choValues.filter(item => item !== input.value);
+        //       return {
+        //         choValues: newArr
+        //       }
+        //   })
       };
 
       handleX = (event) => {
@@ -66,10 +91,12 @@ class InDir extends Component {
         <td>{this.props.name}
         <input type="submit" value="X" onClick={this.handleX}></input>
         </td>  
-        <td><Selector2 key={this.props.name} prefix={'Добавить значение'} name={this.props.name} values ={this.state.allValues}  change={this.addValue}/></td>  
+        <td><Selector2 key={this.props.name} prefix={'Добавить значение'} name={this.props.name} values ={this.state.allValues}  change={this.pickValue}/></td>  
         
-          {this.state.choValues.map(v => {               
-              return <td>{v}</td>
+          {[...this.state.choValues].map(v => {               
+              return <td>{v}
+              <input type="submit" value="X" onClick={this.delValue}></input>
+              </td>
               })}
       </tr>
 

@@ -5,6 +5,7 @@ class Selector2 extends Component {
   handleChange = (event) => {
      
     this.props.change({name:this.props.name, value:event.target.value, count:this.props.values.find(x => x.name === event.target.value).count});
+    
   }  
 
   render() {
