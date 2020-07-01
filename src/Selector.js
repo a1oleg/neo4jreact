@@ -14,11 +14,9 @@ class Selector extends Component {
   }  
 
   render() {
-    //console.log(this.props);
+    
     return (
-      //  <div>
-      //    <div>_RequestHead</div>
-
+      
       <form>
       <label >
       {this.props.name}

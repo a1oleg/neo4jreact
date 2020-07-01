@@ -1,25 +1,19 @@
 import React, { Component } from "react";
-import Selector2 from "./Selector2";
-import Selector from "./Selector";
 let neo4j = require('neo4j-driver')
 
 class InDir extends Component {
-
     constructor(props) {
         super(props);
     
         this.state = {
           allValues: [],          
-          //choValues: [],  
-          choValues:new Set()        
+          choValues: [],  
+          //choValues:new Set()        
         };        
         this.driver = neo4j.driver(
-          'bolt://localhost:7687',
-          neo4j.auth.basic('neo4j', 'letmein')
-        );
-        
-        this.getValues();
-        
+          'bolt://localhost:7687', neo4j.auth.basic('neo4j', 'letmein')
+        );        
+        this.getValues();        
     };
  
     getValues = () => {
@@ -45,43 +39,61 @@ class InDir extends Component {
         });    
       };
     
-      pickValue = (input) => {
-        this.props.change(input.value) 
-        //console.log(input.value);  
+      pickValue = (event) => {
+        let x = event.target.value
+        this.props.change(x) 
+        //console.log(event.target.value);  
+        
         this.setState(({ choValues }) => {             
-          const newSet = choValues.add(input.value);       
+          const newArr = [...choValues, x];       
             return {
-                choValues: newSet
+                choValues: newArr
             }
-          });        
+          });   
+          //console.log(this.state.choValues);     
       };
 
-      delValue = (input) => { 
-        console.log(input.value);  
+      delValue = (event) => { 
+        let x = event.target.value;  
+        this.props.removeVal(x) 
         this.setState(({ choValues }) => {
-            const newSet = choValues.delete(input.value);          
+            const newArr = choValues.splice(x);          
             return {
-                choValues: newSet
+                choValues: newArr
             }
           });
       };
 
-      handleX = (event) => {
-        
-        this.props.remove(this.props.name);
+      handleXdir = (event) => {        
+        this.props.removeDir(this.props.name);
       }  
 
   render() {    
     return (
         <tr>
         <td>{this.props.name}
-        <input type="submit" value="X" onClick={this.handleX}></input>
+        <input type="submit" value="X" onClick={this.handleXdir}></input>
         </td>  
-        <td><Selector2 key={this.props.name} prefix={'Добавить значение'} name={this.props.name} values ={this.state.allValues}  change={this.pickValue}/></td>  
+        <td>
+        {/* <td><Selector2 key={this.props.name} prefix={'Добавить значение'} name={this.props.name} values ={this.state.allValues}  change={this.pickValue}/> */}
+          <form>
+          <label >
+          {this.props.prefix}     
+            <select onChange={this.pickValue} >
+            <option selected>...</option>
+            {this.state.allValues.map(v => {
+            return <option key={v.name}  value={v.name} count={v.count} >{v.name} {v.count}</option>
+          })}
+            
+          </select>
+          </label>     
+          </form>
+      
+        </td>  
         
-          {[...this.state.choValues].map(v => {               
+          {this.state.choValues.map(v => {               
               return <td>{v}
-              {/* <input type="submit" value="X" onClick={this.delValue}></input> */}
+              <input type="submit" value="X" onClick={this.delValue}></input>
               </td>
               })}
       </tr>

@@ -12,10 +12,8 @@ class App extends Component {
 
     this.state = {
       allDirs: [],
-      inDirs: [],
-      //inDirs: new Map(),
-      //choDirs: new Map(),
-      choValues:new Set(),
+      inDirs: [],      
+      choValues:[],
       outFields: [],
       
       results: new Map()
@@ -53,7 +51,7 @@ class App extends Component {
     });    
   };
 
-  addDir = (input) => {    
+  addInDir = input => {    
     this.setState(({ inDirs }) => {
       const newArr = [...inDirs, input.name]; 
       
@@ -63,37 +61,60 @@ class App extends Component {
       })
   };
 
-  addValue = input => {
-    this.setState(({ choValues }) => {             
-      const newSet = choValues.add(input);  
-      //console.log(newSet)     ;
+  removeInDir = (event) => { 
+    //let x =  event.target.getAttribute('foo');
+    this.setState(({ inDirs }) => {
+      const newArr = inDirs.filter(item => item !== event);
         return {
-            choValues: newSet
+          inDirs: newArr
         }
-      });        
-      console.log(this.state.choValues)
-    // console.log(input)
-    // let newMap = this.state.choDirs;
+    })
+  }
 
-    // let x = newMap.get(input.name); 
-    // if(typeof x !== "undefined"){
-    //   const newArr = [...x, input.value];
-
-    //   newMap.set(input.name, newArr);
-    // }
-    // else{
-    //   newMap.set(input.name, [input.value]);
-    // }
-
-    // this.setState(() => {  
-    //   return {
-    //     choDirs: newMap
-    //   }        
-    // })
-    // console.log(this.state.choDirs);
+  addInValue = input => {               
+      this.setState(({ choValues }) => {
+        const newArr = [...choValues, input]; 
+        
+          return {
+            choValues: newArr
+          }
+        })        
+      console.log(this.state.choValues)   
     
   };
 
+  removeInValue = (event) => { 
+    //let x =  event.target.getAttribute('foo');
+    this.setState(({ choValues }) => {
+      const newArr = choValues.filter(item => item !== event);
+        return {
+          choValues: newArr
+        }
+    })
+  }
+
+  addOutField = input => {
+    
+    this.setState(({ outFields }) => {
+      const newArr = [...outFields, input.name];   
+
+        return {
+          outFields: newArr
+        }
+    })
+    //console.log(this.state.outFields)
+  };
+
+  removeOutField = (event) => {    
+    let x =  event.target.getAttribute('foo');
+    this.setState(({ outFields }) => {
+      const newArr = outFields.filter(item => item !== x);
+        return {
+          outFields: newArr
+        }
+    })
+  }
+  
   xfetch = () => {    
     
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
@@ -105,19 +126,15 @@ class App extends Component {
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
-    //qString += 'LIMIT 6';
-
-    // console.log([...this.state.choDirs].map(n => n[1]).reduce(function(previousValue, currentValue, index, array) {
-    //   return [...previousValue, ...currentValue];
-    // }));   
-
+    qString += 'LIMIT 60';
 
     console.log(qString);
-
+    console.log(this.state.choValues);
+    console.log(this.state.outFields);
     const res = new Map();
     session
     .run(qString, {
-      inValues: [...this.state.choValues],
+      inValues: this.state.choValues,
       outFields: this.state.outFields
       
     })
@@ -148,41 +165,7 @@ class App extends Component {
         console.log(error)
       }
     });    
-  }
-
-  addOutField = input => {
-    
-    this.setState(({ outFields }) => {
-      const newArr = [...outFields, input.name];   
-
-        return {
-          outFields: newArr
-        }
-    })
-    //console.log(this.state.outFields)
-  };  
-
-  removeInDir = (event) => { 
-    //let x =  event.target.getAttribute('foo');
-    this.setState(({ inDirs }) => {
-      const newArr = inDirs.filter(item => item !== event);
-        return {
-          inDirs: newArr
-        }
-    })
-  }
-
-  
-  removeOutField = (event) => {    
-    let x =  event.target.getAttribute('foo');
-    this.setState(({ outFields }) => {
-      const newArr = outFields.filter(item => item !== x);
-        return {
-          outFields: newArr
-        }
-    })
-  }
-
+  }  
   
   exportTable = (type, fn, dl) => {
     console.log('item');
@@ -201,11 +184,11 @@ class App extends Component {
         <table border="1"> 
           <tbody >
           {[...this.state.inDirs].map(item => {            
-            return <InDir name={item} remove ={this.removeInDir}  change ={this.addValue}/>
+            return <InDir name={item} removeDir ={this.removeInDir} removeVal ={this.removeInValue}  change ={this.addInValue}/>
             }) 
           }
           <tr>
-                  <td><Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/></td>  
+                  <td><Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addInDir}/></td>  
                  
           </tr>
           </tbody>
