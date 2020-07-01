@@ -55,15 +55,17 @@ class App extends Component {
 
   addDir = (input) => {    
     this.setState(({ inDirs }) => {
-      const newArr = [...inDirs, input.name]; 
+      const newArr = [...inDirs, input.value]; 
       
         return {
           inDirs: newArr
         }
       })
+      console.log(this.state.inDirs) 
   };
 
   addValue = input => {
+    console.log(input)
     this.setState(({ choValues }) => {             
       const newSet = choValues.add(input);  
       //console.log(newSet)     ;
@@ -72,25 +74,7 @@ class App extends Component {
         }
       });        
       console.log(this.state.choValues)
-    // console.log(input)
-    // let newMap = this.state.choDirs;
-
-    // let x = newMap.get(input.name); 
-    // if(typeof x !== "undefined"){
-    //   const newArr = [...x, input.value];
-
-    //   newMap.set(input.name, newArr);
-    // }
-    // else{
-    //   newMap.set(input.name, [input.value]);
-    // }
-
-    // this.setState(() => {  
-    //   return {
-    //     choDirs: newMap
-    //   }        
-    // })
-    // console.log(this.state.choDirs);
+    
     
   };
 
@@ -171,7 +155,6 @@ class App extends Component {
         }
     })
   }
-
   
   removeOutField = (event) => {    
     let x =  event.target.getAttribute('foo');
@@ -182,7 +165,6 @@ class App extends Component {
         }
     })
   }
-
   
   exportTable = (type, fn, dl) => {
     console.log('item');
@@ -193,19 +175,18 @@ class App extends Component {
 		XLSX.writeFile(wb, fn || ('SheetJSTableExport.' + 'xlsx'));
   }
 
-
   render() {      
       return (      
       <main>        
         <br></br>
         <table border="1"> 
           <tbody >
-          {[...this.state.inDirs].map(item => {            
+          {this.state.inDirs.map(item => {            
             return <InDir name={item} remove ={this.removeInDir}  change ={this.addValue}/>
             }) 
           }
           <tr>
-                  <td><Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/></td>  
+                  <td><Selector prefix= {'Добавить справочник'} values={this.state.allDirs} change ={this.addDir}/></td>  
                  
           </tr>
           </tbody>

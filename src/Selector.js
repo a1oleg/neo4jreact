@@ -1,15 +1,10 @@
 import React, { Component } from "react";
 
-//import { Paper } from "@material-ui/core";
+
 class Selector extends Component {
  
   handleChange = (event) => {
-    //console.log(event.target.name);
-    //console.log(event.target.value);
-    
-    //console.log(event.target.count);
-    
-    
+    //console.log({name: this.props.name, value: event.target.value});
     this.props.change(this.props.values.find(x => x.name === event.target.value));
   }  
 
@@ -21,7 +16,7 @@ class Selector extends Component {
 
       <form>
       <label >
-      {this.props.name}
+      {this.props.prefix}
        
         <select onChange={this.handleChange} >
         <option selected>...</option>
