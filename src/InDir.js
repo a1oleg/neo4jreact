@@ -17,7 +17,7 @@ class InDir extends Component {
           'bolt://localhost:7687',
           neo4j.auth.basic('neo4j', 'letmein')
         );
-        console.log(this.props) 
+        
         this.getValues();
         
     };
@@ -27,7 +27,7 @@ class InDir extends Component {
         const values = [];
         session
         .run('MATCH (d:Dir{Name: $nameinput})-[:value]->(v) RETURN v.Name', {
-          nameinput: this.props.value
+          nameinput: this.props.name
         })
         .subscribe({     
           onNext: record => {
@@ -46,10 +46,10 @@ class InDir extends Component {
       };
     
       pickValue = (input) => {
-        this.props.change(input) 
-        console.log(input.value);  
+        this.props.change(input.value) 
+        //console.log(input.value);  
         this.setState(({ choValues }) => {             
-          const newSet = choValues.add(input);       
+          const newSet = choValues.add(input.value);       
             return {
                 choValues: newSet
             }
@@ -68,16 +68,16 @@ class InDir extends Component {
 
       handleX = (event) => {
         
-        this.props.remove(this.props.value);
+        this.props.remove(this.props.name);
       }  
 
   render() {    
     return (
         <tr>
-        <td>{this.props.value}
+        <td>{this.props.name}
         <input type="submit" value="X" onClick={this.handleX}></input>
         </td>  
-        <td><Selector key={this.props.value} prefix={'Добавить значение'} name={this.props.value} values ={this.state.allValues}  change={this.pickValue}/></td>  
+        <td><Selector2 key={this.props.name} prefix={'Добавить значение'} name={this.props.name} values ={this.state.allValues}  change={this.pickValue}/></td>  
         
           {[...this.state.choValues].map(v => {               
               return <td>{v}
