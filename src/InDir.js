@@ -45,22 +45,15 @@ class InDir extends Component {
         });    
       };
     
-      pickValue = (input) => { 
-        console.log(input.value);  
-        this.setState(({ choValues }) => {
-          //const newArr = [...choValues, input.value];     
+      pickValue = (input) => {
+        this.props.change(input.value) 
+        //console.log(input.value);  
+        this.setState(({ choValues }) => {             
           const newSet = choValues.add(input.value);       
             return {
                 choValues: newSet
             }
-          });
-        
-        //   this.setState(({ allValues }) => {
-        //     const newArr = allValues.filter(item => item !== input.value);
-        //       return {
-        //         allValues: newArr
-        //       }
-        //   })
+          });        
       };
 
       delValue = (input) => { 
@@ -71,13 +64,6 @@ class InDir extends Component {
                 choValues: newSet
             }
           });
-        
-        //   this.setState(({ choValues }) => {
-        //     const newArr = choValues.filter(item => item !== input.value);
-        //       return {
-        //         choValues: newArr
-        //       }
-        //   })
       };
 
       handleX = (event) => {
@@ -95,7 +81,7 @@ class InDir extends Component {
         
           {[...this.state.choValues].map(v => {               
               return <td>{v}
-              <input type="submit" value="X" onClick={this.delValue}></input>
+              {/* <input type="submit" value="X" onClick={this.delValue}></input> */}
               </td>
               })}
       </tr>

@@ -14,8 +14,8 @@ class App extends Component {
       allDirs: [],
       inDirs: [],
       //inDirs: new Map(),
-      choDirs: new Map(),
-      
+      //choDirs: new Map(),
+      choValues:new Set(),
       outFields: [],
       
       results: new Map()
@@ -64,26 +64,34 @@ class App extends Component {
   };
 
   addValue = input => {
-    //console.log(input)
-    let newMap = this.state.choDirs;
+    this.setState(({ choValues }) => {             
+      const newSet = choValues.add(input);  
+      //console.log(newSet)     ;
+        return {
+            choValues: newSet
+        }
+      });        
+      console.log(this.state.choValues)
+    // console.log(input)
+    // let newMap = this.state.choDirs;
 
-    let x = newMap.get(input.name); 
-    if(typeof x !== "undefined"){
-      const newArr = [...x, input.value];
+    // let x = newMap.get(input.name); 
+    // if(typeof x !== "undefined"){
+    //   const newArr = [...x, input.value];
 
-      newMap.set(input.name, newArr);
-    }
-    else{
-      newMap.set(input.name, [input.value]);
-    }
+    //   newMap.set(input.name, newArr);
+    // }
+    // else{
+    //   newMap.set(input.name, [input.value]);
+    // }
 
-    this.setState(() => {  
-      return {
-        choDirs: newMap
-      }        
-    })
-    console.log(this.state.choDirs);
-    //console.log([...this.state.choDirs.get("Виды работ")]);
+    // this.setState(() => {  
+    //   return {
+    //     choDirs: newMap
+    //   }        
+    // })
+    // console.log(this.state.choDirs);
+    
   };
 
   xfetch = () => {    
@@ -92,7 +100,7 @@ class App extends Component {
         
     // по обратному порядку каунта добавлять в запрос    
     
-    let qString = 'MATCH (x:Value)<-[:field]-(w:Wagon)\n WHERE x.Name IN $inFields\n';
+    let qString = 'MATCH (x:Value)<-[:field]-(w:Wagon)\n WHERE x.Name IN $inValues\n';
     
     qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
     qString += 'WHERE d.Name IN $outFields\n';
@@ -109,9 +117,7 @@ class App extends Component {
     const res = new Map();
     session
     .run(qString, {
-      inFields: [...this.state.choDirs].map(n => n[1]).reduce(function(previousValue, currentValue, index, array) {
-        return [...previousValue, ...currentValue];
-      }),
+      inValues: [...this.state.choValues],
       outFields: this.state.outFields
       
     })
@@ -195,7 +201,7 @@ class App extends Component {
         <table border="1"> 
           <tbody >
           {[...this.state.inDirs].map(item => {            
-            return <InDir name={item} remove ={this.removeInDir} />
+            return <InDir name={item} remove ={this.removeInDir}  change ={this.addValue}/>
             }) 
           }
           <tr>
