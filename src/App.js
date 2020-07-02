@@ -79,14 +79,13 @@ class App extends Component {
             choValues: newArr
           }
         })        
-      console.log(this.state.choValues)   
-    
+      
   };
 
-  removeInValue = (event) => { 
-    //let x =  event.target.getAttribute('foo');
+  removeInValue = input => { 
+    console.log(input);
     this.setState(({ choValues }) => {
-      const newArr = choValues.filter(item => item !== event);
+      const newArr = choValues.filter(item => item !== input);
         return {
           choValues: newArr
         }
@@ -115,26 +114,28 @@ class App extends Component {
     })
   }
   
-  xfetch = () => {    
-    
+  xfetch = () => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-        
-    // по обратному порядку каунта добавлять в запрос    
     
-    let qString = 'MATCH (x:Value)<-[:field]-(w:Wagon)\n WHERE x.Name IN $inValues\n';
+    let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';    
     
-    qString += 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w)\n';
+    let qString = this.state.choValues.map(n => n).reduce(function(sum, current) {
+      return sum + qStart + current + '"})\n';
+    }, 0);    
+ 
+    qString += 'MATCH (w)-[:field]->(v:Value)<-[:value]-(d:Dir)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
     qString += 'LIMIT 60';
 
-    console.log(qString);
+    console.log(qString.substr(1));
     console.log(this.state.choValues);
     console.log(this.state.outFields);
+
     const res = new Map();
     session
-    .run(qString, {
-      inValues: this.state.choValues,
+    .run(qString.substr(1), {
+      //inValues: this.state.choValues,
       outFields: this.state.outFields
       
     })
@@ -167,8 +168,7 @@ class App extends Component {
     });    
   }  
   
-  exportTable = (type, fn, dl) => {
-    console.log('item');
+  exportTable = (type, fn, dl) => {    
 	var elt = document.getElementById('data-table');
 	var wb = XLSX.utils.table_to_book(elt, {sheet:"Sheet JS"});
 	return dl ?
@@ -208,7 +208,7 @@ class App extends Component {
           <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>
           </thead>    
 
-          <tbody >
+          <tbody id="data-table">
           <tr>
             <td>...</td> <td>...</td>
             {this.state.outFields.map(n => {               

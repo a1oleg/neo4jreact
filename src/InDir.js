@@ -54,8 +54,8 @@ class InDir extends Component {
       };
 
       delValue = (event) => { 
-        let x = event.target.value;  
-        this.props.removeVal(x) 
+        let x = event.target.name;  
+        this.props.removeVal(x);
         this.setState(({ choValues }) => {
             const newArr = choValues.splice(x);          
             return {
@@ -93,7 +93,7 @@ class InDir extends Component {
         
           {this.state.choValues.map(v => {               
               return <td>{v}
-              <input type="submit" value="X" onClick={this.delValue}></input>
+              <input type="submit" value="X" name = {v}  onClick={this.delValue}></input>
               </td>
               })}
       </tr>
