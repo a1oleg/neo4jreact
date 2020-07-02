@@ -3,6 +3,7 @@ import XLSX from "xlsx";
 import './App.css';
 import InDir from "./InDir";
 import Selector from "./Selector";
+import SimpleSelect from "./SimpleSelect";
 
 let neo4j = require('neo4j-driver')
 
@@ -179,7 +180,8 @@ class App extends Component {
 
   render() {      
       return (      
-      <main>        
+      <main>   
+            
         <br></br>
         <table border="1"> 
           <tbody >
@@ -198,6 +200,7 @@ class App extends Component {
         <br></br>
         <table border="1" >
           <thead>
+            <SimpleSelect/>
           <tr>
             <td>_id</td>            
             {this.state.outFields.map(n => {               
