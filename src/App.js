@@ -1,4 +1,4 @@
-import React, { Component,useState } from "react";
+import React, { Component} from "react";
 import XLSX from "xlsx";
 import './App.css';
 import InDir from "./InDir";
@@ -198,6 +198,7 @@ class App extends Component {
         <br></br>
         <table border="1" >
           <thead>
+          <tr>
             <td>_id</td>            
             {this.state.outFields.map(n => {               
               return <td>{n}
@@ -206,6 +207,7 @@ class App extends Component {
             })}
 
           <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>
+          </tr> 
           </thead>    
 
           <tbody id="data-table">
