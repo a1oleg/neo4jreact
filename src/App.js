@@ -1,9 +1,14 @@
-import React, { Component,useState } from "react";
+import React, { Component} from "react";
 import XLSX from "xlsx";
 import './App.css';
 import InDir from "./InDir";
 import Selector from "./Selector";
 
+import Paper from '@material-ui/core/Paper';
+import { Button } from '@material-ui/core';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
 let neo4j = require('neo4j-driver')
 
 class App extends Component {
@@ -180,24 +185,25 @@ class App extends Component {
   render() {      
       return (      
       <main>        
-        <br></br>
-        <table border="1"> 
-          <tbody >
+        
+        <Table border="1"> 
+          <TableBody >
           {[...this.state.inDirs].map(item => {            
             return <InDir name={item} removeDir ={this.removeInDir} removeVal ={this.removeInValue}  change ={this.addInValue}/>
             }) 
           }
-          <tr>
+          <TableRow>
                   <td><Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addInDir}/></td>  
                  
-          </tr>
-          </tbody>
-        </table>
-
+          </TableRow>
+          </TableBody>
+        </Table>
+        
                
         <br></br>
         <table border="1" >
           <thead>
+          <tr>
             <td>_id</td>            
             {this.state.outFields.map(n => {               
               return <td>{n}
@@ -206,6 +212,7 @@ class App extends Component {
             })}
 
           <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>
+          </tr> 
           </thead>    
 
           <tbody id="data-table">
@@ -231,7 +238,7 @@ class App extends Component {
         </table>
 
         <br></br>
-        <button onClick={this.xfetch}>    Запрос   </button>
+        <Button color="primary" onClick={this.xfetch}>    Запрос   </Button>
         <br></br>
         <input type="submit" value="Выгрузить в Excel" onClick={this.exportTable}></input>
         
