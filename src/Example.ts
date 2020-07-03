@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import MultiSelect from "react-multi-select-component";
-
  
 const Example: React.FC = () => {
   const options = [
