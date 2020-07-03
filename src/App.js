@@ -3,7 +3,7 @@ import XLSX from "xlsx";
 import './App.css';
 import InDir from "./InDir";
 import Selector from "./Selector";
-import MultipleSelect from "./MultipleSelect";
+import Example from "./Example";
 
 let neo4j = require('neo4j-driver')
 
@@ -182,6 +182,7 @@ class App extends Component {
       return (      
       <main>   
             {/* <MultipleSelect names={this.state.allDirs.map(d => d.name)}/> */}
+            <Example/>
         <br></br>
         <table border="1"> 
           <tbody >
