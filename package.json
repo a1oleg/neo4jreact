@@ -12,6 +12,7 @@
     "react-dom": "^16.13.1",
     "react-multi-select-component": "^2.0.12",
     "react-scripts": "3.4.1",
+    "typescript": "^3.9.6",
     "xlsx": "^0.16.2"
   },
   "scripts": {
