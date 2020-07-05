@@ -13,8 +13,8 @@ class App extends Component {
 
     this.state = {
       allDirs: [],
-      inDirs: [],      
-      choValues:[],
+      //inDirs: [],      
+      inValues:[],
       outFields: [],
       
       results: new Map()
@@ -53,46 +53,66 @@ class App extends Component {
   };
 
   addInDir = input => {    
-    
-    this.setState(({ inDirs }) => {
-      const newArr = [...inDirs, {name:input.name}]; 
-      
+    this.setState(({ inValues }) => {
+      let x = inValues.find(item => item.name === input.name);
+      //console.log(x);
+      if(typeof x == 'undefined'){
+        const newArr = [...inValues, {name:input.name, values:[]}];
         return {
-          inDirs: newArr
+          inValues: newArr
         }
-      })
+      }
+             
+    })       
   };
 
   removeInDir = (event) => { 
-    this.setState(({ inDirs }) => {
-      const newArr = inDirs.filter(item => item.name !== event);
+    this.setState(({ inValues }) => {
+      const newArr = inValues.filter(item => item.name !== event);
         return {
-          inDirs: newArr
+          inValues: newArr
         }
     })
   }
 
   addInValue = input => { 
-      this.setState(({ choValues }) => {
-
-        
-        const newArr = [...choValues, input.value]; 
-        
+      this.setState(({ inValues }) => {
+        let x = inValues.find(item => item.name === input.name);
+        //console.log(x);
+        if(typeof x == 'undefined'){
+          const newArr = [...inValues, {name:input.name, values:[input.value]}];
           return {
-            choValues: newArr
+            inValues: newArr
           }
-        })        
-      
+        }
+        else{
+          let y = inValues.filter(item => item.name !== input.name);
+          x.values.push(input.value);
+
+          const newArr = [...y, x];
+          return {
+            inValues: newArr
+          }
+
+        };          
+      })        
+        
   };
 
   removeInValue = input => { 
-    console.log(input);
-    this.setState(({ choValues }) => {
-      const newArr = choValues.filter(item => item !== input);
+    //console.log(input);
+    this.setState(({ inValues }) => {
+      let x = inValues.find(item => item.name === input.name);
+      let y = inValues.filter(item => item.name !== input.name);
+
+      x.values =  x.values.filter(item => item !== input.value);
+      
+      const newArr = [...y, x];
         return {
-          choValues: newArr
+          inValues: newArr
         }
     })
+    
   }
 
   addOutField = input => {
@@ -122,7 +142,7 @@ class App extends Component {
     
     let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';    
     
-    let qString = this.state.choValues.map(n => n).reduce(function(sum, current) {
+    let qString = this.state.inValues.map(n => n).reduce(function(sum, current) {
       return sum + qStart + current + '"})\n';
     }, 0);    
  
@@ -132,13 +152,13 @@ class App extends Component {
     //qString += 'LIMIT 60';
 
     console.log(qString.substr(1));
-    console.log(this.state.choValues);
+    console.log(this.state.inValues);
     console.log(this.state.outFields);
 
     const newMap = new Map();
     session
     .run(qString.substr(1), {
-      //inValues: this.state.choValues,
+      //inValues: this.state.inValues,
       outFields: this.state.outFields
       
     })
@@ -150,12 +170,11 @@ class App extends Component {
         let x = newMap.get(id);  
         if(typeof x !== "undefined"){
           const newArr = [...x, field];
-
           newMap.set(id, newArr);
         }
         else{
           newMap.set(id, [field]);
-        } 
+        };
       },
       onCompleted: () => {  
         session.close();// returns a Promise
@@ -191,7 +210,8 @@ class App extends Component {
         <br></br>
         <table border="1"> 
           <tbody >
-          {this.state.inDirs.map(item => {            
+          
+          {this.state.inValues.map(item => {            
             return <InDir name={item.name} removeDir ={this.removeInDir} removeVal ={this.removeInValue}  change ={this.addInValue}/>
             }) 
           }

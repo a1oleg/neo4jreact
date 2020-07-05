@@ -54,7 +54,7 @@ class InDir extends Component {
 
       delValue = (event) => { 
         let x = event.target.name;  
-        this.props.removeVal(x);
+        this.props.removeVal({name:this.props.name, value:event.target.name});
         this.setState(({ choValues }) => {
             const newArr = choValues.splice(x);          
             return {
