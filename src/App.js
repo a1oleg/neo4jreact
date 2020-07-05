@@ -55,7 +55,7 @@ class App extends Component {
   addInDir = input => {    
     
     this.setState(({ inDirs }) => {
-      const newArr = [...inDirs, input.name]; 
+      const newArr = [...inDirs, {name:input.name}]; 
       
         return {
           inDirs: newArr
@@ -64,9 +64,8 @@ class App extends Component {
   };
 
   removeInDir = (event) => { 
-    //let x =  event.target.getAttribute('foo');
     this.setState(({ inDirs }) => {
-      const newArr = inDirs.filter(item => item !== event);
+      const newArr = inDirs.filter(item => item.name !== event);
         return {
           inDirs: newArr
         }
@@ -74,8 +73,9 @@ class App extends Component {
   }
 
   addInValue = input => { 
-
       this.setState(({ choValues }) => {
+
+        
         const newArr = [...choValues, input.value]; 
         
           return {
@@ -192,7 +192,7 @@ class App extends Component {
         <table border="1"> 
           <tbody >
           {this.state.inDirs.map(item => {            
-            return <InDir name={item} removeDir ={this.removeInDir} removeVal ={this.removeInValue}  change ={this.addInValue}/>
+            return <InDir name={item.name} removeDir ={this.removeInDir} removeVal ={this.removeInValue}  change ={this.addInValue}/>
             }) 
           }
           <tr>
