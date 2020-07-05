@@ -3,7 +3,7 @@ import XLSX from "xlsx";
 import './App.css';
 import InDir from "./InDir";
 import Selector from "./Selector";
-import Example from "./Example";
+//import Example from "./Example";
 
 let neo4j = require('neo4j-driver')
 
@@ -133,7 +133,7 @@ class App extends Component {
     console.log(this.state.choValues);
     console.log(this.state.outFields);
 
-    const res = new Map();
+    const newMap = new Map();
     session
     .run(qString.substr(1), {
       //inValues: this.state.choValues,
@@ -141,15 +141,23 @@ class App extends Component {
       
     })
     .subscribe({
-      onNext: record => {       
-        let x = res.get(record._fields[0].identity.low);  
-        if(typeof x !== "undefined"){
-          const newArr = [...x, record._fields[1]];
+      onNext: record => {    
+        let id = record._fields[0].identity.low;
+        let field = record._fields[1];
 
-          res.set(record._fields[0].identity.low, newArr);
+        // if(typeof field === "undefined"){
+        //   field = null;
+        // };
+
+        let x = newMap.get(id);
+
+        if(typeof x !== "undefined"){
+          const newArr = [...x, field];
+
+          newMap.set(id, newArr);
         }
         else{
-          res.set(record._fields[0].identity.low, [record._fields[1]]);
+          newMap.set(id, field);
         } 
       },
       onCompleted: () => {  
@@ -157,10 +165,10 @@ class App extends Component {
         
         this.setState(({ results }) => {
             return {
-              results: res
+              results: newMap
             }
         });   
-        //console.log(res);
+        console.log(newMap);
         //console.log([...this.state.results]);
       },
       onError: error => {
@@ -182,7 +190,7 @@ class App extends Component {
       return (      
       <main>   
             {/* <MultipleSelect names={this.state.allDirs.map(d => d.name)}/> */}
-            <Example/>
+            {/* <Example/> */}
         <br></br>
         <table border="1"> 
           <tbody >
