@@ -53,6 +53,7 @@ class App extends Component {
   };
 
   addInDir = input => {    
+    
     this.setState(({ inDirs }) => {
       const newArr = [...inDirs, input.name]; 
       
@@ -72,9 +73,10 @@ class App extends Component {
     })
   }
 
-  addInValue = input => {               
+  addInValue = input => { 
+
       this.setState(({ choValues }) => {
-        const newArr = [...choValues, input]; 
+        const newArr = [...choValues, input.value]; 
         
           return {
             choValues: newArr
@@ -127,13 +129,13 @@ class App extends Component {
     qString += 'MATCH (w)-[:field]->(v:Value)<-[:value]-(d:Dir)\n';
     qString += 'WHERE d.Name IN $outFields\n';
     qString += 'RETURN w, v.Name ';
-    qString += 'LIMIT 60';
+    //qString += 'LIMIT 60';
 
     console.log(qString.substr(1));
     console.log(this.state.choValues);
     console.log(this.state.outFields);
 
-    const res = new Map();
+    const newMap = new Map();
     session
     .run(qString.substr(1), {
       //inValues: this.state.choValues,
@@ -141,15 +143,18 @@ class App extends Component {
       
     })
     .subscribe({
-      onNext: record => {       
-        let x = res.get(record._fields[0].identity.low);  
+      onNext: record => {
+        let id = record._fields[0].identity.low;
+        let field = record._fields[1];
+        
+        let x = newMap.get(id);  
         if(typeof x !== "undefined"){
-          const newArr = [...x, record._fields[1]];
+          const newArr = [...x, field];
 
-          res.set(record._fields[0].identity.low, newArr);
+          newMap.set(id, newArr);
         }
         else{
-          res.set(record._fields[0].identity.low, [record._fields[1]]);
+          newMap.set(id, [field]);
         } 
       },
       onCompleted: () => {  
@@ -157,10 +162,10 @@ class App extends Component {
         
         this.setState(({ results }) => {
             return {
-              results: res
+              results: newMap
             }
         });   
-        //console.log(res);
+        //console.log(newMap);
         //console.log([...this.state.results]);
       },
       onError: error => {
@@ -186,7 +191,7 @@ class App extends Component {
         <br></br>
         <table border="1"> 
           <tbody >
-          {[...this.state.inDirs].map(item => {            
+          {this.state.inDirs.map(item => {            
             return <InDir name={item} removeDir ={this.removeInDir} removeVal ={this.removeInValue}  change ={this.addInValue}/>
             }) 
           }
@@ -222,8 +227,7 @@ class App extends Component {
               })}
           </tr>   
 
-          {[...this.state.results].map(item => {
-            
+          {[...this.state.results].map(item => {            
             return <tr>
                   <td>{item[0]}</td>  
                     {item[1].map(v => {               

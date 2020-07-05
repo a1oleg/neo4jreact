@@ -41,8 +41,7 @@ class InDir extends Component {
     
       pickValue = (event) => {
         let x = event.target.value
-        this.props.change(x) 
-        //console.log(event.target.value);  
+        this.props.change({name:event.target.name, value:event.target.value}) 
         
         this.setState(({ choValues }) => {             
           const newArr = [...choValues, x];       
@@ -75,14 +74,13 @@ class InDir extends Component {
         <input type="submit" value="X" onClick={this.handleXdir}></input>
         </td>  
         <td>
-        {/* <td><Selector2 key={this.props.name} prefix={'Добавить значение'} name={this.props.name} values ={this.state.allValues}  change={this.pickValue}/> */}
           <form>
           <label >
           {this.props.prefix}     
-            <select onChange={this.pickValue} >
+            <select onChange={this.pickValue} name ={this.props.name} >
             <option selected>...</option>
             {this.state.allValues.map(v => {
-            return <option key={v.name}  value={v.name} count={v.count} >{v.name} {v.count}</option>
+            return <option key={v.name} value={v.name} count={v.count} >{v.name} {v.count}</option>
           })}
             
           </select>
