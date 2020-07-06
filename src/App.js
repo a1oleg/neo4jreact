@@ -57,7 +57,7 @@ class App extends Component {
       let x = inValues.find(item => item.name === input.name);
       //console.log(x);
       if(typeof x == 'undefined'){
-        const newArr = [...inValues, {name:input.name, values:[]}];
+        const newArr = [...inValues, {name:input.name, bics:[]}];
         return {
           inValues: newArr
         }
@@ -76,18 +76,19 @@ class App extends Component {
   }
 
   addInValue = input => { 
+    console.log(input);
       this.setState(({ inValues }) => {
         let x = inValues.find(item => item.name === input.name);
         //console.log(x);
         if(typeof x == 'undefined'){
-          const newArr = [...inValues, {name:input.name, values:[input.value]}];
+          const newArr = [...inValues, {name:input.name, bics:[input.bic]}];
           return {
             inValues: newArr
           }
         }
         else{
           let y = inValues.filter(item => item.name !== input.name);
-          x.values.push(input.value);
+          x.bics.push(input.bic);
 
           const newArr = [...y, x];
           return {
@@ -96,7 +97,7 @@ class App extends Component {
 
         };          
       })        
-      console.log(this.state.inValues);
+      //console.log(this.state.inValues);
   };
 
   removeInValue = input => { 
@@ -105,7 +106,7 @@ class App extends Component {
       const x = inValues.find(item => item.name === input.name);
       const y = inValues.filter(item => item.name !== input.name);
 
-      x.values =  x.values.filter(item => item !== input.value);
+      x.bics =  x.bics.filter(item => item !== input.bic);
       
       const newArr = [...y, x];
         return {
@@ -140,15 +141,19 @@ class App extends Component {
   xfetch = () => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     
-    let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';    
-    
-    let qString = this.state.inValues.map(n => n).reduce(function(sum, current) {
-      return sum + qStart + current + '"})\n';
+    //let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';   
+    let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\n WHERE d.Name="';   
+    let qEnd = '" \n AND v.Name IN [';
+
+
+
+    let qString = this.state.inValues.reduce(function(sum, current) {
+      return sum + qStart + current.name +  qEnd + current.values.toString() + ']\n';
     }, 0);    
  
-    qString += 'MATCH (w)-[:field]->(v:Value)<-[:value]-(d:Dir)\n';
-    qString += 'WHERE d.Name IN $outFields\n';
-    qString += 'RETURN w, v.Name ';
+    qString += 'MATCH (w)-[:field]->(vv:Value)<-[:value]-(dd:Dir)\n';
+    qString += 'WHERE dd.Name IN $outFields\n';
+    qString += 'RETURN w, vv.Name ';
     //qString += 'LIMIT 60';
 
     console.log(qString.substr(1));
