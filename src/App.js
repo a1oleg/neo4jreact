@@ -76,7 +76,7 @@ class App extends Component {
   }
 
   addInValue = input => { 
-    console.log(input);
+    //console.log(input);
       this.setState(({ inValues }) => {
         let x = inValues.find(item => item.name === input.name);
         //console.log(x);
@@ -142,8 +142,8 @@ class App extends Component {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     
     //let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';   
-    let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\n WHERE d.Name="';   
-    let qEnd = '" \n AND v.BIC IN [';
+    let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\nWHERE d.Name="';   
+    let qEnd = '"\nAND v.BIC IN [';
 
     let qString = this.state.inValues.reduce(function(sum, current) {
       return sum + qStart + current.name +  qEnd + current.bics + ']\n';
@@ -151,7 +151,7 @@ class App extends Component {
  
     qString += 'MATCH (w)-[:field]->(vv:Value)<-[:value]-(dd:Dir)\n';
     qString += 'WHERE dd.Name IN $outFields\n';
-    qString += 'RETURN w, vv.Name ';
+    qString += 'RETURN w, CASE WHEN vv IS NULL THEN "null" ELSE vv.Name END';
     //qString += 'LIMIT 60';
 
     console.log(qString.substr(1));
@@ -169,6 +169,7 @@ class App extends Component {
       onNext: record => {
         let id = record._fields[0].identity.low;
         let field = record._fields[1];
+        console.log(record._fields, id, field);
         
         let x = newMap.get(id);  
         if(typeof x !== "undefined"){
