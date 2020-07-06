@@ -52,11 +52,11 @@ class InDir extends Component {
           //console.log(this.state.choValues);     
       };
 
-      delValue = (event) => { 
+      delValue = (event) => {         
         let x = event.target.name;  
-        this.props.removeVal({name:this.props.name, value:event.target.name});
-        this.setState(({ choValues }) => {
-            const newArr = choValues.splice(x);          
+        this.props.removeVal({name:this.props.name, value:x});
+        this.setState(({ choValues }) => {            
+            const newArr = choValues.filter(item => item !== x);         
             return {
                 choValues: newArr
             }
