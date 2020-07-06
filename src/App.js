@@ -143,12 +143,10 @@ class App extends Component {
     
     //let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';   
     let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\n WHERE d.Name="';   
-    let qEnd = '" \n AND v.Name IN [';
-
-
+    let qEnd = '" \n AND v.BIC IN [';
 
     let qString = this.state.inValues.reduce(function(sum, current) {
-      return sum + qStart + current.name +  qEnd + current.values.toString() + ']\n';
+      return sum + qStart + current.name +  qEnd + current.bics + ']\n';
     }, 0);    
  
     qString += 'MATCH (w)-[:field]->(vv:Value)<-[:value]-(dd:Dir)\n';
