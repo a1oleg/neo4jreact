@@ -96,14 +96,14 @@ class App extends Component {
 
         };          
       })        
-        
+      console.log(this.state.inValues);
   };
 
   removeInValue = input => { 
-    //console.log(input);
+    
     this.setState(({ inValues }) => {
-      let x = inValues.find(item => item.name === input.name);
-      let y = inValues.filter(item => item.name !== input.name);
+      const x = inValues.find(item => item.name === input.name);
+      const y = inValues.filter(item => item.name !== input.name);
 
       x.values =  x.values.filter(item => item !== input.value);
       
