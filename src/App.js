@@ -3,6 +3,7 @@ import XLSX from "xlsx";
 import './App.css';
 import InDir from "./InDir";
 import Selector from "./Selector";
+import Row from "./Row";
 // import Example from "./Example";
 
 let neo4j = require('neo4j-driver')
@@ -151,7 +152,7 @@ class App extends Component {
  
     qString += 'MATCH (w)-[:field]->(vv:Value)<-[:value]-(dd:Dir)\n';
     qString += 'WHERE dd.Name IN $outFields\n';
-    qString += 'RETURN w, vv.Name ';
+    qString += 'RETURN w, dd.Name, vv.Name ';
     //qString += 'LIMIT 60';
 
     console.log(qString.substr(1));
@@ -168,15 +169,16 @@ class App extends Component {
     .subscribe({
       onNext: record => {
         let id = record._fields[0].identity.low;
-        let field = record._fields[1];
+        let dir = record._fields[1];
+        let field = record._fields[2];
         
         let x = newMap.get(id);  
         if(typeof x !== "undefined"){
-          const newArr = [...x, field];
+          const newArr = [...x, dir + '@' + field];
           newMap.set(id, newArr);
         }
         else{
-          newMap.set(id, [field]);
+          newMap.set(id, [dir + '@' + field]);
         };
       },
       onCompleted: () => {  
@@ -251,12 +253,15 @@ class App extends Component {
           </tr>   
 
           {[...this.state.results].map(item => {            
-            return <tr>
-                  <td>{item[0]}</td>  
-                    {item[1].map(v => {               
-                      return <td>{v}</td>
-                      })}
-                </tr> 
+            return <Row id= {item[0]} values= {item[1]}  header= {this.state.outFields}/>
+            // <tr>
+            //       <td>{item[0]}</td>  
+            //         {item[1].map(v => { 
+
+            //           return <td>{v}</td>
+                     
+            //          })}
+            //     </tr> 
 
             }) 
           }
