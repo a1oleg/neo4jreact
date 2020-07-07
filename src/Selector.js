@@ -4,11 +4,6 @@ import React, { Component } from "react";
 class Selector extends Component {
  
   handleChange = (event) => {
-    //console.log(event.target.name);
-    //console.log(event.target.value);
-    
-    //console.log(event.target.count);
-    
     
     this.props.change(this.props.values.find(x => x.name === event.target.value));
   }  
@@ -19,12 +14,12 @@ class Selector extends Component {
       
       <form>
       <label >
-      {this.props.name}
+      {/* {this.props.name} */}
        
         <select onChange={this.handleChange} >
         <option selected>...</option>
         {this.props.values.map(v => {
-         return <option key={v.name} value={v.name} count={v.count} >{v.name} {v.count}</option>
+         return <option key={v.name} value={v.name}>{v.name}</option>
        })}
           
         </select>

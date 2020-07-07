@@ -220,7 +220,7 @@ class App extends Component {
             }) 
           }
           <tr>
-                  <td><Selector name= {'Добавить справочник'} values={this.state.allDirs} change ={this.addInDir}/></td>  
+          <td>Добавить справочник  <Selector values={this.state.allDirs} change ={this.addInDir}/></td>  
                  
           </tr>
           </tbody>
@@ -239,7 +239,7 @@ class App extends Component {
               </td>       
             })}
 
-          <td><Selector name= {'Добавить поле вывода'} values={this.state.allDirs} change ={this.addOutField}/> </td>
+          <td>Добавить поле вывода <Selector values={this.state.allDirs} change ={this.addOutField}/> </td>
           </tr> 
           </thead>    
 
