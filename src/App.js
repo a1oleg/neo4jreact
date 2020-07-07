@@ -142,12 +142,11 @@ class App extends Component {
   xfetch = () => {
     const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
     
-    //let qStart = 'MATCH (w:Wagon)-[:field]->(:Value{Name:"';   
-    let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\n WHERE d.Name="';   
-    let qEnd = '" \n AND v.BIC IN [';
+    let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\nWHERE d.Name="';   
+    let qEnd = '" \nAND v.BIC IN [';
 
     let qString = this.state.inValues.reduce(function(sum, current) {
-      return sum + qStart + current.name +  qEnd + current.bics + ']\n';
+      return sum + qStart + current.name +  qEnd + [...new Set(current.bics)] + ']\n';
     }, 0);    
  
     qString += 'MATCH (w)-[:field]->(vv:Value)<-[:value]-(dd:Dir)\n';
@@ -253,16 +252,7 @@ class App extends Component {
           </tr>   
 
           {[...this.state.results].map(item => {            
-            return <Row id= {item[0]} values= {item[1]}  header= {this.state.outFields}/>
-            // <tr>
-            //       <td>{item[0]}</td>  
-            //         {item[1].map(v => { 
-
-            //           return <td>{v}</td>
-                     
-            //          })}
-            //     </tr> 
-
+            return <Row id= {item[0]} values= {item[1]}  header= {this.state.outFields}/>            
             }) 
           }
           </tbody>      

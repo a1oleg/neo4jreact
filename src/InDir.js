@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import Selector from "./Selector";
 let neo4j = require('neo4j-driver')
+
 
 class InDir extends Component {
     constructor(props) {
@@ -41,15 +43,14 @@ class InDir extends Component {
         });    
       };
     
-      pickValue = (event) => {
-        //let x = event.target.value;
-        let x = this.state.allValues.find(item => item.name === event.target.value);
-
-        //let bic2 = event.target.getAttribute('bic');
-        this.props.change({name:event.target.name, value:x.name, bic:x.bic});
+      pickValue = (xxx) => {
+        console.log(xxx);
+        //let x = this.state.allValues.find(item => item.name === event.target.value);
+        
+        this.props.change({name:this.props.name, value:xxx.name, bic:xxx.bic.low});
         
         this.setState(({ choValues }) => {             
-          const newArr = [...choValues, x.name];       
+          const newArr = [...choValues, xxx.name];       
             return {
                 choValues: newArr
             }
@@ -80,21 +81,7 @@ class InDir extends Component {
         <td>{this.props.name}
         <input type="submit" value="X" onClick={this.handleXdir}></input>
         </td>  
-        <td>
-          <form>
-          <label >
-          {this.props.prefix}     
-            <select onChange={this.pickValue} name ={this.props.name} >
-            <option selected>...</option>
-            {this.state.allValues.map(v => {
-            return <option key={v.bic} value={v.name} bic={v.bic} >{v.name}</option>
-          })}
-            
-          </select>
-          </label>     
-          </form>
-      
-        </td>  
+        <td><Selector name= {this.props.name} values={this.state.allValues} change ={this.pickValue}/></td>
         
           {this.state.choValues.map(v => {               
               return <td>{v}
