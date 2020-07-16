@@ -129,7 +129,7 @@ class App extends Component {
     //console.log(this.state.outFields)
   };
 
-  removeOutField = (event) => {    
+  removeOutField = event => {    
     let x =  event.target.getAttribute('foo');
     this.setState(({ outFields }) => {
       const newArr = outFields.filter(item => item !== x);
@@ -138,10 +138,8 @@ class App extends Component {
         }
     })
   }
-  
-  xfetch = () => {
-    const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
-    
+
+  getQstring = () => {    
     let qStart = 'MATCH (d:Dir)-[:value]->(v:Value)<-[:field]-(w:Wagon)\nWHERE d.Name="';   
     let qEnd = '" \nAND v.BIC IN [';
 
@@ -154,16 +152,24 @@ class App extends Component {
     qString += 'RETURN w, dd.Name, vv.Name ';
     //qString += 'LIMIT 60';
 
-    console.log(qString.substr(1));
+    let q = qString.substr(1)
+        return {
+          q
+        }
+    
+  }
+  
+  xfetch = () => {
+    const session = this.driver.session({ defaultAccessMode: neo4j.session.READ });
+    //console.log(qString.substr(1));
+    console.log(this.getQstring().q);
     console.log(this.state.inValues);
     console.log(this.state.outFields);
 
     const newMap = new Map();
     session
-    .run(qString.substr(1), {
-      //inValues: this.state.inValues,
-      outFields: this.state.outFields
-      
+    .run(this.getQstring().q, {      
+      outFields: this.state.outFields      
     })
     .subscribe({
       onNext: record => {
@@ -252,14 +258,16 @@ class App extends Component {
           </tr>   
 
           {[...this.state.results].map(item => {            
-            return <Row id= {item[0]} values= {item[1]}  header= {this.state.outFields}/>            
+            return <Row key= {item[0]} values= {item[1]}  header= {this.state.outFields}/>            
             }) 
           }
           </tbody>      
         </table>
 
         <br></br>
-        <button onClick={this.xfetch}>    Запрос   </button>
+        <button onClick={this.xfetch}>Запрос</button>
+        <br></br>
+        <button onClick={console.log(this.getQstring().q)}>Сформировать отчёт</button>
         <br></br>
         <input type="submit" value="Выгрузить в Excel" onClick={this.exportTable}></input>
         
