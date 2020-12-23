@@ -1,0 +1,16 @@
+DESCRIPTION	DOMAINID
+Виды работ	ZVCH_OPER
+Группы родов вагонов	ZVCH_RODT
+Дочерние общества	ZVCH_DO
+Железные дороги	ZVCH_ROAD
+Классификатор неисправностей	ZVCH_BRKT
+Клейма предприятий	ZVCH_STMP
+Неисправности узлов	ZVCH_NDSF
+ОКПО	ZVCH_OKPO
+Отношение отцепки к межрем. периоду	ZVCH_NLSF
+Принадлежность вагона	ZVCH_OWNT
+Рода вагонов	ZVCH_VTYP
+Станции	ZVCH_STAT
+Тип межремонтного  периода	ZVCH_TPER
+Филиалы ДО	ZVCHDOFIL
+Характеристики предприятий	ZVCH_PLCH
